@@ -1,0 +1,12 @@
+[
+    {
+        "directory": "/home/mantas/Projects/test",
+        "file": "src/test.c",
+        "arguments": [
+            "gcc",
+            "-Iinclude",
+            "-c",
+            "src/test.c"
+        ]
+    }
+]
