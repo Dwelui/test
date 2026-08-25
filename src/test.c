@@ -1,35 +1,56 @@
 #include <dwelui/test.h>
+#include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 
+#define TEST(domain, name)                                                                         \
+    static void                              domain##_##name##_impl(void);                         \
+    static void __attribute__((constructor)) domain##_##name##_register(void) {                    \
+        test_add(#domain, #name, domain##_##name##_impl);                                          \
+    }                                                                                              \
+    static void domain##_##name##_impl(void)
+
 typedef struct {
-    char         domain[32];
-    char         name[64];
+    const char  *domain;
+    const char  *name;
     TestCallback callback;
 } Test;
 
 typedef struct {
-    Test     *tests;
-    u_int16_t count;
+    Test    *tests;
+    u_int8_t count;
+    u_int8_t capacity;
 } TestList;
 
-void first_test() {
-    printf("first_test\n");
+TestList testList;
+
+static void __attribute__((constructor)) test_init() {
+    testList.count = 0;
+    testList.capacity = 64;
+    testList.tests = malloc(sizeof(Test) * testList.capacity);
+}
+
+TEST(test, test) {
+    printf("test_test_impl\n");
 }
 
 int main() {
-    test_add("test", "first_test", first_test);
+    for (u_int8_t i = 0; i < testList.count; i++) {
+        testList.tests[i].callback();
+    }
 
-    printf("Hello world!");
+    free(testList.tests);
 
     return 0;
 }
 
 void test_add(const char *domain, const char *name, TestCallback test) {
-    (void)domain;
-    (void)name;
+    if (testList.count >= testList.capacity) {
+        return;
+    }
 
-    test();
+    testList.tests[testList.count++] = (Test){.domain = domain, .name = name, .callback = test};
 
     return;
 }

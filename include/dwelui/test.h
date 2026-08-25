@@ -1,7 +1,7 @@
 #ifndef TEST_H
 #define TEST_H
 
-typedef void (*TestCallback)();
+typedef void (*TestCallback)(void);
 
 void test_add(const char *domain, const char *name, TestCallback test);
 
