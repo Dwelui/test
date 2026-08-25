@@ -6,8 +6,7 @@ ARFLAGS := rcs
 TARGET := build/libtest.a
 TEST_RUNNER := build/tests/run-tests
 
-CFLAGS := -Wall -Wextra -Wpedantic -std=c23
-CFLAGS += -Iinclude
+CFLAGS := -Wall -Wextra -Wpedantic -std=c23 -Iinclude
 TEST_CFLAGS := $(CFLAGS) -g -fsanitize=address -O0
 TEST_LDFLAGS := -fsanitize=address
 
