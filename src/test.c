@@ -1,15 +1,7 @@
 #include <dwelui/test.h>
 #include <stdint.h>
-#include <stdio.h>
 #include <stdlib.h>
 #include <sys/types.h>
-
-#define TEST(domain, name)                                                                         \
-    static void                              domain##_##name##_impl(void);                         \
-    static void __attribute__((constructor)) domain##_##name##_register(void) {                    \
-        test_add(#domain, #name, domain##_##name##_impl);                                          \
-    }                                                                                              \
-    static void domain##_##name##_impl(void)
 
 typedef struct {
     const char  *domain;
@@ -29,10 +21,6 @@ static void __attribute__((constructor)) test_init() {
     testList.count = 0;
     testList.capacity = 64;
     testList.tests = malloc(sizeof(Test) * testList.capacity);
-}
-
-TEST(test, test) {
-    printf("test_test_impl\n");
 }
 
 int main() {

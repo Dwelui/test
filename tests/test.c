@@ -1,5 +1,6 @@
-#include <dwelui/testlib.h>
+#include <dwelui/test.h>
+#include <stdio.h>
 
-// TEST(test, two_plus_two_equals_four) {
-//
-// }
+TEST(test, two_plus_two_equals_four) {
+    printf("two_plus_two_equals_four\n");
+}
