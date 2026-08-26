@@ -42,4 +42,4 @@ clean:
 	rm -rf build
 
 compdb:
-	bear -- $(MAKE) clean all
+	bear --output compile_commands.json -- $(MAKE) clean $(TEST_RUNNER)
