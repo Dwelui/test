@@ -10,9 +10,13 @@ typedef struct {
     TestFn      fn;
 } Test;
 
-void test_assert_impl(bool condition, const char *expression, const char *file, u_int8_t line);
-
-#define test_assert(condition) test_assert_impl((condition), #condition, __FILE__, __LINE__)
+#define test_assert(expr)                                                                          \
+    do {                                                                                           \
+        extern void dwelui__test_assert_impl(bool condition, const char *expression,               \
+                                             const char *file, u_int8_t line);                     \
+                                                                                                   \
+        dwelui__test_assert_impl((expr), #expr, __FILE__, __LINE__);                               \
+    } while (0)
 
 #define TEST(fn_name)                                                                              \
     static void       fn_name(void);                                                               \
