@@ -14,8 +14,6 @@ int               main() {
     return 0;
 }
 
-void dwelui__test_assert_impl(bool condition, const char *expression, const char *file, u_int8_t line) {
-    if (false == condition) {
-        fprintf(stderr, "%s:%d: assertion failed: %s\n", file, line, expression);
-    }
+void dwelui__test_assert_fail(const char *message, const char *file, u_int8_t line) {
+        fprintf(stderr, "%s:%d: assertion failed: %s\n", file, line, message);
 }
