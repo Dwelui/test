@@ -1,5 +1,6 @@
 #include <dwelui/test.h>
 #include <stdint.h>
+#include <stdio.h>
 #include <sys/types.h>
 
 extern const Test __start_tests[];
@@ -11,4 +12,10 @@ int               main() {
     }
 
     return 0;
+}
+
+void test_assert_impl(bool condition, const char *expression, const char *file, u_int8_t line) {
+    if (false == condition) {
+        fprintf(stderr, "%s:%d: assertion failed: %s\n", file, line, expression);
+    }
 }
