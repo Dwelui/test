@@ -1,5 +1,5 @@
-#ifndef TEST_H
-#define TEST_H
+#ifndef DWELUI_TEST_H
+#define DWELUI_TEST_H
 
 #include <sys/types.h>
 
@@ -22,4 +22,4 @@ void test_assert_impl(bool condition, const char *expression, const char *file, 
                                                                                                    \
     static void fn_name(void)
 
-#endif // TEST_H
+#endif // DWELUI_TEST_H
