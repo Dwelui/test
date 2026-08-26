@@ -25,15 +25,15 @@ $(TARGET): $(OBJ)
 
 build/obj/%.o: src/%.c
 	@mkdir -p $(@D)
-	$(CC) $(CFLAGS) -c $< -o $@
+	@$(CC) $(CFLAGS) -c $< -o $@
 
 build/test-obj/%.o: tests/%.c
 	@mkdir -p $(@D)
-	$(CC) $(TEST_CFLAGS) -c $< -o $@
+	@$(CC) $(TEST_CFLAGS) -c $< -o $@
 
 $(TEST_RUNNER): $(OBJ) $(TEST_OBJ)
 	@mkdir -p $(@D)
-	$(CC) $^ $(TEST_LDFLAGS) -o $@
+	@$(CC) $^ $(TEST_LDFLAGS) -o $@
 
 test: $(TEST_RUNNER)
 	@$(TEST_RUNNER)
