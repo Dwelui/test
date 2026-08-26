@@ -7,6 +7,7 @@ extern const Test __start_tests[];
 extern const Test __stop_tests[];
 
 int               main() {
+    // TODO: Might want to register tests only and evaluate them seperatly, filter, run in parallel, etc...
     for (const Test *test = __start_tests; test < __stop_tests; ++test) {
         test->fn();
     }
@@ -17,4 +18,6 @@ int               main() {
 void dwelui__test_assert_fail(const char *message, const char *file, u_int32_t line,
                               const char *function) {
     fprintf(stderr, "%s:%u: %s: assertion failed: %s\n", file, line, function, message);
+
+    // TODO: find TEST by name and file and set it as failed. Might want to set message aswell instead of printing.
 }
