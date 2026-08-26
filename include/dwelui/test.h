@@ -13,9 +13,9 @@ typedef struct {
 #define test_assert(expr)                                                                          \
     do {                                                                                           \
         extern void dwelui__test_assert_fail(const char *message, const char *file,                \
-                                             u_int8_t line);                                       \
+                                             u_int32_t line, const char *function);                \
         if (false == (expr))                                                                       \
-            dwelui__test_assert_fail(#expr, __FILE__, __LINE__);                                   \
+            dwelui__test_assert_fail(#expr, __FILE__, __LINE__, __func__);                         \
     } while (0)
 
 #define TEST(fn_name)                                                                              \

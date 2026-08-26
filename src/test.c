@@ -14,6 +14,7 @@ int               main() {
     return 0;
 }
 
-void dwelui__test_assert_fail(const char *message, const char *file, u_int8_t line) {
-        fprintf(stderr, "%s:%d: assertion failed: %s\n", file, line, message);
+void dwelui__test_assert_fail(const char *message, const char *file, u_int32_t line,
+                              const char *function) {
+    fprintf(stderr, "%s:%u: %s: assertion failed: %s\n", file, line, function, message);
 }
