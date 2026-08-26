@@ -1,15 +1,19 @@
 #ifndef TEST_H
 #define TEST_H
 
-#define TEST(domain, name)                                                                         \
-    static void                              domain##_##name##_impl(void);                         \
-    static void __attribute__((constructor)) domain##_##name##_register(void) {                    \
-        test_add(#domain, #name, domain##_##name##_impl);                                          \
-    }                                                                                              \
-    static void domain##_##name##_impl(void)
+typedef void (*TestFn)(void);
 
-typedef void (*TestCallback)(void);
+typedef struct {
+    const char *name;
+    TestFn      fn;
+} Test;
 
-void test_add(const char *domain, const char *name, TestCallback test);
+#define TEST(fn_name)                                                                              \
+    static void       fn_name(void);                                                               \
+                                                                                                   \
+    static const Test test_##fn_name                                                               \
+        __attribute__((used, section("tests"))) = {.name = #fn_name, .fn = fn_name};               \
+                                                                                                   \
+    static void fn_name(void)
 
 #endif // TEST_H
