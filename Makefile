@@ -15,7 +15,7 @@ OBJ := $(SRC:src/%.c=build/obj/%.o)
 TEST_SRC := $(wildcard tests/*.c)
 TEST_OBJ := $(TEST_SRC:tests/%.c=build/test-obj/%.o)
 
-.PHONY: all test check clean
+.PHONY: all test check clean compdb
 
 all: $(TARGET)
 
@@ -40,3 +40,6 @@ test: $(TEST_RUNNER)
 
 clean:
 	rm -rf build
+
+compdb:
+	bear -- $(MAKE) clean all
