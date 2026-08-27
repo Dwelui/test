@@ -6,14 +6,18 @@
 
 typedef struct {
     const char *message;
-    const char *function; // INFO: overlaps with Test->name
-    const char *file;     // INFO: overlaps with Test->file
     u_int32_t   line;
 } TestFailResult;
 
 typedef TestFailResult *(*TestFn)(void);
 
-// INFO: Needed for macro registration using sections. Remove from header later when registration mechanism changes.
+// The structure in the future could be:
+// many to many relationship between `TestDataProvider` and `Test`
+// many to one `TestResult` with `Test`. `TestResult` could have optional pointer to `TestDataProvider`
+//
+// Proposed changes for such structure:
+// Move pointer owning to `TestResult`. Each `TestResult` could store "status" and other metadata like:
+// test duration
 typedef struct {
     const char     *name;
     const char     *file;
@@ -25,10 +29,9 @@ typedef struct {
 
 #define test_assert(expr)                                                                          \
     do {                                                                                           \
-        extern TestFailResult *dwelui__test_fail(const char *, const char *, u_int32_t,            \
-                                                 const char *);                                    \
+        extern TestFailResult *dwelui__test_fail(const char *, u_int32_t);                         \
         if (false == (expr)) {                                                                     \
-            return dwelui__test_fail(#expr, __FILE__, __LINE__, __func__);                         \
+            return dwelui__test_fail(#expr, __LINE__);                                             \
         }                                                                                          \
     } while (0)
 

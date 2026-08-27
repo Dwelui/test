@@ -38,13 +38,14 @@ int      main() {
         switch (test->status) {
             case TEST_STATUS_FAILED:
                 TestFailResult *failResult = test->failResult;
-                fprintf(stderr, "%s:%u: %s: assertion failed: %s\n", failResult->file,
-                        failResult->line, failResult->function, failResult->message);
+                fprintf(stderr, "%s:%u: %s: assertion failed: %s\n", test->file, failResult->line,
+                        test->name, failResult->message);
 
                 free(failResult);
                 break;
             case TEST_STATUS_PASSED:
-                fprintf(stdout, "%s:%u: %s: assertion passed \n", test->file, test->line, test->name);
+                fprintf(stdout, "%s:%u: %s: assertion passed \n", test->file, test->line,
+                        test->name);
                 break;
         }
     }
@@ -64,11 +65,10 @@ void dwelui__test_register(const char *name, const char *file, u_int32_t line, T
         (Test){name, file, line, fn, .status = TEST_STATUS_PENDING, .failResult = nullptr};
 }
 
-TestFailResult *dwelui__test_fail(const char *message, const char *file, u_int32_t line,
-                                  const char *function) {
+TestFailResult *dwelui__test_fail(const char *message, u_int32_t line) {
     TestFailResult *result = malloc(sizeof(*result));
     if (!result) return nullptr;
-    *result = (TestFailResult){message, function, file, line};
+    *result = (TestFailResult){message, line};
 
     return result;
 }
