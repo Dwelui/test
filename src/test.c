@@ -5,7 +5,6 @@
 #include <stdlib.h>
 #include <sys/types.h>
 
-// TODO: Rename enum values to TEST_STATUS_*
 typedef enum {
     TEST_STATUS_PASSED,
     TEST_STATUS_FAILED,
