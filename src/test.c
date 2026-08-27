@@ -23,11 +23,13 @@ int      main() {
     for (size_t i = 0; i < testList.count; i++) {
         Test *test = &testList.tests[i];
 
-        if (0 == test->fn()) {
+        if (nullptr == test->fn()) {
             test->status = TEST_STATUS_PASSED;
         } else {
             test->status = TEST_STATUS_FAILED;
         }
+
+        printf("Test %s: %d\n", test->name, test->status);
     }
 
     return 0;
@@ -41,9 +43,10 @@ void dwelui__test_register(const char *name, TestFn fn) {
     testList.tests[testList.count++] = (Test){name, fn, .status = TEST_STATUS_PENDING};
 }
 
-void dwelui__test_assert_fail(const char *message, const char *file, u_int32_t line,
-                              const char *function) {
+TestFailResult *dwelui__test_fail(const char *message, const char *file, u_int32_t line,
+                                  const char *function) {
     fprintf(stderr, "%s:%u: %s: assertion failed: %s\n", file, line, function, message);
 
-    // TODO: find TEST by name and file and set it as failed. Might want to set message aswell instead of printing.
+    // return (TestFailResult){.function = function, .message = message, .file = file, .line = line};
+    return nullptr;
 }
