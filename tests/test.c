@@ -7,7 +7,7 @@ TEST(two_plus_two_equals_four, {
 })
 
 TEST(one_plus_one_equals_two, {
-    test_assert(1 + 1 != 2);
+    test_assert(1 + 1 == 2);
 
-    test_assert(1 + 1 == 3);
+    test_assert(1 + 1 != 3);
 })

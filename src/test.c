@@ -21,16 +21,35 @@ TestList testList = {.count = 0, .capacity = 1024};
 
 int      main() {
     for (size_t i = 0; i < testList.count; i++) {
-        Test *test = &testList.tests[i];
+        Test           *test       = &testList.tests[i];
+        TestFailResult *failResult = test->fn();
 
-        if (nullptr == test->fn()) {
+        if (nullptr == failResult) {
             test->status = TEST_STATUS_PASSED;
         } else {
-            test->status = TEST_STATUS_FAILED;
+            test->status     = TEST_STATUS_FAILED;
+            test->failResult = failResult;
         }
-
-        printf("Test %s: %d\n", test->name, test->status);
     }
+
+    for (size_t i = 0; i < testList.count; i++) {
+        Test *test = &testList.tests[i];
+
+        switch (test->status) {
+            case TEST_STATUS_FAILED:
+                TestFailResult *failResult = test->failResult;
+                fprintf(stderr, "%s:%u: %s: assertion failed: %s\n", failResult->file,
+                        failResult->line, failResult->function, failResult->message);
+
+                free(failResult);
+                break;
+            case TEST_STATUS_PASSED:
+                fprintf(stdout, "%s: assertion passed \n", test->name);
+                break;
+        }
+    }
+
+    free(testList.tests);
 
     return 0;
 }
@@ -38,15 +57,20 @@ int      main() {
 void dwelui__test_register(const char *name, TestFn fn) {
     if (testList.count == 0) {
         testList.tests = malloc(sizeof(Test) * testList.capacity);
+        if (!testList.tests) return;
     }
 
-    testList.tests[testList.count++] = (Test){name, fn, .status = TEST_STATUS_PENDING};
+    testList.tests[testList.count++] =
+        (Test){name, fn, .status = TEST_STATUS_PENDING, .failResult = nullptr};
 }
 
 TestFailResult *dwelui__test_fail(const char *message, const char *file, u_int32_t line,
                                   const char *function) {
-    fprintf(stderr, "%s:%u: %s: assertion failed: %s\n", file, line, function, message);
+    TestFailResult *result = malloc(sizeof(*result));
+    if (!result) return nullptr;
 
-    // return (TestFailResult){.function = function, .message = message, .file = file, .line = line};
-    return nullptr;
+    *result =
+        (TestFailResult){.function = function, .message = message, .file = file, .line = line};
+
+    return result;
 }

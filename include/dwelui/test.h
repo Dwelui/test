@@ -15,9 +15,10 @@ typedef TestFailResult *(*TestFn)(void);
 
 // INFO: Needed for macro registration using sections. Remove from header later when registration mechanism changes.
 typedef struct {
-    const char *name;
-    TestFn      fn;
-    u_int8_t    status;
+    const char     *name;
+    TestFn          fn;
+    u_int8_t        status;
+    TestFailResult *failResult;
 } Test;
 
 #define test_assert(expr)                                                                          \
