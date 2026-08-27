@@ -3,13 +3,24 @@
 #include <stdio.h>
 #include <sys/types.h>
 
-extern const Test __start_tests[];
-extern const Test __stop_tests[];
+typedef enum {
+    TEST_OK,
+    TEST_FAILED,
+    TEST_SKIPPED,
+} TEST_STATUS;
+
+extern Test __start_tests[];
+extern Test __stop_tests[];
 
 int               main() {
-    // TODO: Might want to register tests only and evaluate them seperatly, filter, run in parallel, etc...
-    for (const Test *test = __start_tests; test < __stop_tests; ++test) {
-        test->fn();
+    for (Test *test = __start_tests; test < __stop_tests; ++test) {
+        test->status = TEST_SKIPPED;
+
+        if (test->fn() == 0) {
+            test->status = TEST_OK;
+        } else {
+            test->status = TEST_FAILED;
+        }
     }
 
     return 0;
