@@ -44,7 +44,7 @@ int      main() {
                 free(failResult);
                 break;
             case TEST_STATUS_PASSED:
-                fprintf(stdout, "%s: assertion passed \n", test->name);
+                fprintf(stdout, "%s:%u: %s: assertion passed \n", test->file, test->line, test->name);
                 break;
         }
     }
@@ -54,23 +54,21 @@ int      main() {
     return 0;
 }
 
-void dwelui__test_register(const char *name, TestFn fn) {
+void dwelui__test_register(const char *name, const char *file, u_int32_t line, TestFn fn) {
     if (testList.count == 0) {
         testList.tests = malloc(sizeof(Test) * testList.capacity);
         if (!testList.tests) return;
     }
 
     testList.tests[testList.count++] =
-        (Test){name, fn, .status = TEST_STATUS_PENDING, .failResult = nullptr};
+        (Test){name, file, line, fn, .status = TEST_STATUS_PENDING, .failResult = nullptr};
 }
 
 TestFailResult *dwelui__test_fail(const char *message, const char *file, u_int32_t line,
                                   const char *function) {
     TestFailResult *result = malloc(sizeof(*result));
     if (!result) return nullptr;
-
-    *result =
-        (TestFailResult){.function = function, .message = message, .file = file, .line = line};
+    *result = (TestFailResult){message, function, file, line};
 
     return result;
 }
