@@ -6,6 +6,7 @@
 
 typedef int (*TestFn)(void);
 
+// INFO: Needed for macro registration using sections. Remove from header later when registration mechanism changes.
 typedef struct {
     const char *name;
     TestFn      fn;
