@@ -1,29 +1,40 @@
 #include <dwelui/test.h>
 #include <stdint.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <sys/types.h>
 
+// TODO: Rename enum values to TEST_STATUS_*
 typedef enum {
     TEST_OK,
     TEST_FAILED,
+    TEST_PENDING,
     TEST_SKIPPED,
 } TEST_STATUS;
 
-extern Test __start_tests[];
-extern Test __stop_tests[];
+typedef struct {
+    Test     *tests;
+    u_int64_t count;
+    u_int64_t capacity;
+} TestList;
 
-int               main() {
-    for (Test *test = __start_tests; test < __stop_tests; ++test) {
-        test->status = TEST_SKIPPED;
+TestList testList = {.count = 0, .capacity = 1024};
 
-        if (test->fn() == 0) {
-            test->status = TEST_OK;
-        } else {
-            test->status = TEST_FAILED;
-        }
+int main() {
+
+    for (Test *test = testList.tests; test < &testList.tests[testList.count]; ++test) {
+        test->fn();
     }
 
     return 0;
+}
+
+void dwelui__test_register(const char *name, TestFn fn) {
+    if (testList.count == 0) {
+        testList.tests = malloc(sizeof(Test) * testList.capacity);
+    }
+
+    testList.tests[testList.count++] = (Test){name, fn, .status = TEST_PENDING};
 }
 
 void dwelui__test_assert_fail(const char *message, const char *file, u_int32_t line,

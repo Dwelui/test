@@ -27,10 +27,11 @@ typedef struct {
 #define TEST(fn_name)                                                                              \
     static int  fn_name(void);                                                                     \
                                                                                                    \
-    static Test test_##fn_name                                                                     \
-        __attribute__((used, section("tests"), aligned(__alignof__(Test)))) = {.name = #fn_name,   \
-                                                                               .fn   = fn_name};   \
-                                                                                                   \
+    extern void dwelui__test_register(const char *name, TestFn fn);                                \
+    static void register_##fn_name(void) __attribute__((constructor));                             \
+    static void register_##fn_name(void) {                                                         \
+        dwelui__test_register(#fn_name, fn_name);                                                  \
+    }                                                                                              \
     static int fn_name(void)
 
 #endif // DWELUI_TEST_H
