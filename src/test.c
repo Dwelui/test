@@ -6,10 +6,10 @@
 #include <sys/types.h>
 
 typedef enum {
-    TEST_STATUS_PASSED,
-    TEST_STATUS_FAILED,
-    TEST_STATUS_PENDING,
-} TEST_STATUS;
+    TEST_RESULT_STATUS_PASSED,
+    TEST_RESULT_STATUS_FAILED,
+    TEST_RESULT_STATUS_PENDING,
+} TEST_RESULT_STATUS;
 
 typedef struct {
     Test  *tests;
@@ -39,12 +39,12 @@ int            main() {
         Test       *test   = result->test;
 
         switch (result->status) {
-            case TEST_STATUS_FAILED:
+            case TEST_RESULT_STATUS_FAILED:
                 fprintf(stderr, "%s:%u: %s: assertion failed: %s\n", test->file, result->line,
                         test->name, result->message);
 
                 break;
-            case TEST_STATUS_PASSED:
+            case TEST_RESULT_STATUS_PASSED:
                 fprintf(stdout, "%s:%u: %s: assertion passed \n", test->file, test->line,
                         test->name);
                 break;
@@ -73,14 +73,14 @@ TestResult *test_result_create() {
 
     TestResult *result = &testResultList.results[testResultList.count++];
     *result =
-        (TestResult){.test = nullptr, .status = TEST_STATUS_PENDING, .message = nullptr, .line = 0};
+        (TestResult){.test = nullptr, .status = TEST_RESULT_STATUS_PENDING, .message = nullptr, .line = 0};
 
     return result;
 }
 
 TestResult *dwelui__test_fail(const char *message, u_int32_t line) {
     TestResult *result = test_result_create();
-    result->status = TEST_STATUS_FAILED;
+    result->status = TEST_RESULT_STATUS_FAILED;
     result->message = message;
     result->line = line;
 
@@ -89,7 +89,7 @@ TestResult *dwelui__test_fail(const char *message, u_int32_t line) {
 
 TestResult *dwelui__test_pass() {
     TestResult *result = test_result_create();
-    result->status = TEST_STATUS_PASSED;
+    result->status = TEST_RESULT_STATUS_PASSED;
 
     return result;
 }
