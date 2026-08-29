@@ -29,11 +29,14 @@ typedef struct {
 TestList       testList       = {.count = 0, .capacity = 1024};
 TestResultList testResultList = {.count = 0, .capacity = 1024};
 
-void           print_file(const char *file);
-void           print_test_status(const char *treePrefix, Test *test);
 void print_test_failed_information(bool nextTestExists, const char *file, TestResult *result);
+void print_run_header(size_t discoveredTests);
+void print_file(const char *file);
+void print_test_status(const char *treePrefix, Test *test);
 
 int  main() {
+    print_run_header(testList.count);
+
     for (size_t i = 0; i < testList.count; i++) {
         Test       *test   = &testList.items[i];
         TestResult *result = test->fn();
@@ -92,6 +95,14 @@ int  main() {
     free(testResultList.items);
 
     return 0;
+}
+
+void print_run_header(size_t discoveredTests) {
+    printf("libtest\n");
+    printf("Author: Dwelui\n");
+    printf("Status: starting test runtime\n");
+    printf("Discovered tests: %lu\n", discoveredTests);
+    printf("----------------------------------------\n");
 }
 
 void dwelui__test_register(const char *name, const char *file, uint32_t line, TestFn fn) {
