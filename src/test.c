@@ -71,6 +71,23 @@ int  main() {
         }
     }
 
+    size_t testCount = testList.count, testPassedCount = 0, testFailedCount = 0;
+    for (size_t i = 0; i < testList.count; i++) {
+        Test *test = &testList.items[i];
+
+        switch (test->status) {
+            case TEST_STATUS_PASSED:
+                testPassedCount++;
+                break;
+            case TEST_STATUS_FAILED:
+                testFailedCount++;
+                break;
+        }
+    }
+
+    printf("\nTotal: %lu | " C_GREEN "Passed: %lu" C_RESET " | " C_RED "Failed: %lu" C_RESET " \n",
+           testCount, testPassedCount, testFailedCount);
+
     free(testList.items);
 
     return 0;
