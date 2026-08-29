@@ -28,25 +28,18 @@ TestResultList testResultList = {.count = 0, .capacity = 1024};
 
 int            main() {
     for (size_t i = 0; i < testList.count; i++) {
-        Test *test = &testList.tests[i];
-        // TODO: Decide is returning the result is better than associating TestResult to Test in function that create TestResult.
+        Test       *test   = &testList.tests[i];
         TestResult *result = test->fn();
 
-        if (nullptr == result->message) {
-            test->status = TEST_STATUS_PASSED;
-        } else {
-            test->status = TEST_STATUS_FAILED;
-
-            test->result = result;
-        }
+        result->test = test;
     }
 
-    for (size_t i = 0; i < testList.count; i++) {
-        Test *test = &testList.tests[i];
+    for (size_t i = 0; i < testResultList.count; i++) {
+        TestResult *result = &testResultList.results[i];
+        Test       *test   = result->test;
 
-        switch (test->status) {
+        switch (result->status) {
             case TEST_STATUS_FAILED:
-                TestResult *result = test->result;
                 fprintf(stderr, "%s:%u: %s: assertion failed: %s\n", test->file, result->line,
                         test->name, result->message);
 
@@ -69,8 +62,7 @@ void dwelui__test_register(const char *name, const char *file, u_int32_t line, T
         if (!testList.tests) return;
     }
 
-    testList.tests[testList.count++] =
-        (Test){name, file, line, fn, .status = TEST_STATUS_PENDING, .result = nullptr};
+    testList.tests[testList.count++] = (Test){name, file, line, fn};
 }
 
 TestResult *test_result_create() {
@@ -80,20 +72,24 @@ TestResult *test_result_create() {
     }
 
     TestResult *result = &testResultList.results[testResultList.count++];
-    *result = (TestResult){.message = nullptr, .line = 0};
+    *result =
+        (TestResult){.test = nullptr, .status = TEST_STATUS_PENDING, .message = nullptr, .line = 0};
 
     return result;
 }
 
 TestResult *dwelui__test_fail(const char *message, u_int32_t line) {
     TestResult *result = test_result_create();
-    *result = (TestResult){message, line};
+    result->status = TEST_STATUS_FAILED;
+    result->message = message;
+    result->line = line;
 
     return result;
 }
 
 TestResult *dwelui__test_pass() {
     TestResult *result = test_result_create();
+    result->status = TEST_STATUS_PASSED;
 
     return result;
 }

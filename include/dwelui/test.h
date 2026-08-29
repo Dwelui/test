@@ -14,11 +14,11 @@ struct Test {
     const char *file;
     u_int32_t   line;
     TestFn      fn;
-    u_int8_t    status;
-    TestResult *result;
 };
 
 struct TestResult {
+    Test       *test;
+    u_int8_t    status;
     const char *message;
     u_int32_t   line;
 };
