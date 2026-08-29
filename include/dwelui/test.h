@@ -13,6 +13,7 @@ struct Test {
     const char *file;
     uint32_t    line;
     TestFn      fn;
+    uint8_t     status;
 };
 
 struct TestResult {

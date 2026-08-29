@@ -8,11 +8,11 @@
 #define C_RESET "\x1b[0m"
 
 typedef enum {
-    TEST_RESULT_STATUS_PASSED,
-    TEST_RESULT_STATUS_FAILED,
-    TEST_RESULT_STATUS_PENDING,
-} TEST_RESULT_STATUS;
-const char *test_result_status_to_cstring(TEST_RESULT_STATUS status);
+    TEST_STATUS_PASSED,
+    TEST_STATUS_FAILED,
+    TEST_STATUS_PENDING,
+} TEST_STATUS;
+const char *test_status_to_cstring(TEST_STATUS status);
 
 typedef struct {
     Test  *items;
@@ -30,7 +30,7 @@ TestList       testList       = {.count = 0, .capacity = 1024};
 TestResultList testResultList = {.count = 0, .capacity = 1024};
 
 void           print_file(const char *file);
-void print_test_status(const char *treePrefix, const char *testName, TEST_RESULT_STATUS status);
+void print_test_status(const char *treePrefix, const char *testName, TEST_STATUS status);
 void print_test_failed_information(bool nextTestExists, const char *file, TestResult *result);
 
 int  main() {
@@ -38,6 +38,7 @@ int  main() {
         Test       *test   = &testList.items[i];
         TestResult *result = test->fn();
 
+        test->status = result->status;
         result->test = test;
     }
 
@@ -65,7 +66,7 @@ int  main() {
 
         print_test_status(treePrefix, test->name, result->status);
 
-        if (result->status == TEST_RESULT_STATUS_FAILED) {
+        if (result->status == TEST_STATUS_FAILED) {
             print_test_failed_information(nextTest != nullptr, test->file, result);
         }
     }
@@ -82,7 +83,8 @@ void dwelui__test_register(const char *name, const char *file, uint32_t line, Te
     }
 
     // The "file" could be reusable array. To save space and checking for each test in a same file.
-    testList.items[testList.count++] = (Test){name, file, line, fn};
+    testList.items[testList.count++] =
+        (Test){name, file, line, fn, .status = TEST_STATUS_PENDING};
 }
 
 TestResult *test_result_create() {
@@ -93,7 +95,7 @@ TestResult *test_result_create() {
 
     TestResult *result = &testResultList.items[testResultList.count++];
     *result            = (TestResult){.test         = nullptr,
-                                      .status       = TEST_RESULT_STATUS_PENDING,
+                                      .status       = TEST_STATUS_PENDING,
                                       .fail_message = nullptr,
                                       .fail_line    = 0};
 
@@ -102,7 +104,7 @@ TestResult *test_result_create() {
 
 TestResult *dwelui__test_fail(const char *message, uint32_t line) {
     TestResult *result   = test_result_create();
-    result->status       = TEST_RESULT_STATUS_FAILED;
+    result->status       = TEST_STATUS_FAILED;
     result->fail_message = message;
     result->fail_line    = line;
 
@@ -111,24 +113,23 @@ TestResult *dwelui__test_fail(const char *message, uint32_t line) {
 
 TestResult *dwelui__test_pass() {
     TestResult *result = test_result_create();
-    result->status     = TEST_RESULT_STATUS_PASSED;
+    result->status     = TEST_STATUS_PASSED;
 
     return result;
 }
 
-void print_test_status(const char *treePrefix, const char *testName, TEST_RESULT_STATUS status) {
+void print_test_status(const char *treePrefix, const char *testName, TEST_STATUS status) {
     switch (status) {
-        case TEST_RESULT_STATUS_PASSED:
+        case TEST_STATUS_PASSED:
             printf(C_GREEN "%s%s %s" C_RESET "\n", treePrefix, testName,
-                   test_result_status_to_cstring(status));
+                   test_status_to_cstring(status));
             return;
-        case TEST_RESULT_STATUS_FAILED:
+        case TEST_STATUS_FAILED:
             printf(C_RED "%s%s %s" C_RESET "\n", treePrefix, testName,
-                   test_result_status_to_cstring(status));
+                   test_status_to_cstring(status));
             return;
         default:
-            printf("%s%s %s\n", treePrefix, testName,
-                   test_result_status_to_cstring(status));
+            printf("%s%s %s\n", treePrefix, testName, test_status_to_cstring(status));
     };
 }
 
@@ -139,8 +140,8 @@ void print_test_failed_information(bool nextTestExists, const char *file, TestRe
         treeFailedPrefix = "   ";
     }
 
-    printf(C_RED "%s  └%s:%u :: " C_RED "\"%s\"" C_RESET "\n", treeFailedPrefix, file, result->fail_line,
-           result->fail_message);
+    printf(C_RED "%s  └%s:%u :: " C_RED "\"%s\"" C_RESET "\n", treeFailedPrefix, file,
+           result->fail_line, result->fail_message);
 }
 
 void print_file(const char *file) {
@@ -157,13 +158,13 @@ void print_file(const char *file) {
     free(formatted);
 }
 
-const char *test_result_status_to_cstring(TEST_RESULT_STATUS status) {
+const char *test_status_to_cstring(TEST_STATUS status) {
     switch (status) {
-        case TEST_RESULT_STATUS_PASSED:
+        case TEST_STATUS_PASSED:
             return "passed";
-        case TEST_RESULT_STATUS_FAILED:
+        case TEST_STATUS_FAILED:
             return "failed";
-        case TEST_RESULT_STATUS_PENDING:
+        case TEST_STATUS_PENDING:
             return "pending";
         default:
             abort();
