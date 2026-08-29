@@ -4,21 +4,24 @@
 #include <stdint.h>
 #include <sys/types.h>
 
-typedef struct {
-    const char *message;
-    u_int32_t   line;
-} TestResult;
+typedef struct Test       Test;
+typedef struct TestResult TestResult;
 
 typedef TestResult *(*TestFn)(void);
 
-typedef struct {
+struct Test {
     const char *name;
     const char *file;
     u_int32_t   line;
     TestFn      fn;
     u_int8_t    status;
     TestResult *result;
-} Test;
+};
+
+struct TestResult {
+    const char *message;
+    u_int32_t   line;
+};
 
 #define test_assert(expr)                                                                          \
     do {                                                                                           \
