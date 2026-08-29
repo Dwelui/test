@@ -21,15 +21,15 @@ TestList testList = {.count = 0, .capacity = 1024};
 
 int      main() {
     for (size_t i = 0; i < testList.count; i++) {
-        Test           *test       = &testList.tests[i];
-        TestFailResult *failResult = test->fn();
+        Test       *test   = &testList.tests[i];
+        TestResult *result = test->fn();
 
-        if (nullptr == failResult) {
+        if (nullptr == result) {
             test->status = TEST_STATUS_PASSED;
         } else {
             test->status = TEST_STATUS_FAILED;
 
-            test->failResult = failResult;
+            test->result = result;
         }
     }
 
@@ -38,11 +38,11 @@ int      main() {
 
         switch (test->status) {
             case TEST_STATUS_FAILED:
-                TestFailResult *failResult = test->failResult;
-                fprintf(stderr, "%s:%u: %s: assertion failed: %s\n", test->file, failResult->line,
-                        test->name, failResult->message);
+                TestResult *result = test->result;
+                fprintf(stderr, "%s:%u: %s: assertion failed: %s\n", test->file, result->line,
+                        test->name, result->message);
 
-                free(failResult);
+                free(result);
                 break;
             case TEST_STATUS_PASSED:
                 fprintf(stdout, "%s:%u: %s: assertion passed \n", test->file, test->line,
@@ -63,13 +63,13 @@ void dwelui__test_register(const char *name, const char *file, u_int32_t line, T
     }
 
     testList.tests[testList.count++] =
-        (Test){name, file, line, fn, .status = TEST_STATUS_PENDING, .failResult = nullptr};
+        (Test){name, file, line, fn, .status = TEST_STATUS_PENDING, .result = nullptr};
 }
 
-TestFailResult *dwelui__test_fail(const char *message, u_int32_t line) {
-    TestFailResult *result = malloc(sizeof(*result));
+TestResult *dwelui__test_fail(const char *message, u_int32_t line) {
+    TestResult *result = malloc(sizeof(*result));
     if (!result) return nullptr;
-    *result = (TestFailResult){message, line};
+    *result = (TestResult){message, line};
 
     return result;
 }
