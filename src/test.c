@@ -73,3 +73,11 @@ TestResult *dwelui__test_fail(const char *message, u_int32_t line) {
 
     return result;
 }
+
+TestResult *dwelui__test_pass() {
+    TestResult *result = malloc(sizeof(*result));
+    if (!result) return nullptr;
+    *result = (TestResult){.message = nullptr, .line = 0};
+
+    return result;
+}

@@ -26,6 +26,7 @@ struct TestResult {
 #define test_assert(expr)                                                                          \
     do {                                                                                           \
         extern TestResult *dwelui__test_fail(const char *, u_int32_t);                             \
+                                                                                                   \
         if (false == (expr)) {                                                                     \
             return dwelui__test_fail(#expr, __LINE__);                                             \
         }                                                                                          \
@@ -35,13 +36,15 @@ struct TestResult {
     static TestResult *fn_name(void);                                                              \
                                                                                                    \
     extern void        dwelui__test_register(const char *, const char *, u_int32_t, TestFn);       \
+    extern TestResult *dwelui__test_pass();                                                        \
+                                                                                                   \
     static void        register_##fn_name(void) __attribute__((constructor));                      \
     static void        register_##fn_name(void) {                                                  \
         dwelui__test_register(#fn_name, __FILE__, __LINE__, fn_name);                              \
     }                                                                                              \
                                                                                                    \
     static TestResult *fn_name(void) {                                                             \
-        body return nullptr;                                                                       \
+        body return dwelui__test_pass();                                                           \
     }
 
 #endif // DWELUI_TEST_H
