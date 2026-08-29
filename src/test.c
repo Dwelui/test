@@ -8,6 +8,7 @@ typedef enum {
     TEST_RESULT_STATUS_FAILED,
     TEST_RESULT_STATUS_PENDING,
 } TEST_RESULT_STATUS;
+const char *test_result_status_to_cstring(TEST_RESULT_STATUS status);
 
 typedef struct {
     Test  *items;
@@ -43,16 +44,7 @@ int            main() {
             file = test->file;
         }
 
-        switch (result->status) {
-            case TEST_RESULT_STATUS_FAILED:
-                printf("%u: %s: assertion failed: %s\n", result->fail_line, test->name,
-                       result->fail_message);
-
-                break;
-            case TEST_RESULT_STATUS_PASSED:
-                printf("%u: %s: assertion passed \n", test->line, test->name);
-                break;
-        }
+        printf("  ├%s assertion %s\n", test->name, test_result_status_to_cstring(result->status));
     }
 
     free(testList.items);
@@ -99,4 +91,14 @@ TestResult *dwelui__test_pass() {
     result->status     = TEST_RESULT_STATUS_PASSED;
 
     return result;
+}
+
+const char *test_result_status_to_cstring(TEST_RESULT_STATUS status)
+{
+    switch (status) {
+        case TEST_RESULT_STATUS_PASSED: return "passed";
+        case TEST_RESULT_STATUS_FAILED: return "failed";
+        case TEST_RESULT_STATUS_PENDING: return "pending";
+        default: abort();
+    };
 }
