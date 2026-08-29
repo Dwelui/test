@@ -40,8 +40,8 @@ int            main() {
 
         switch (result->status) {
             case TEST_RESULT_STATUS_FAILED:
-                fprintf(stderr, "%s:%u: %s: assertion failed: %s\n", test->file, result->line,
-                        test->name, result->message);
+                fprintf(stderr, "%s:%u: %s: assertion failed: %s\n", test->file, result->fail_line,
+                        test->name, result->fail_message);
 
                 break;
             case TEST_RESULT_STATUS_PASSED:
@@ -73,7 +73,7 @@ TestResult *test_result_create() {
 
     TestResult *result = &testResultList.results[testResultList.count++];
     *result =
-        (TestResult){.test = nullptr, .status = TEST_RESULT_STATUS_PENDING, .message = nullptr, .line = 0};
+        (TestResult){.test = nullptr, .status = TEST_RESULT_STATUS_PENDING, .fail_message = nullptr, .fail_line = 0};
 
     return result;
 }
@@ -81,8 +81,8 @@ TestResult *test_result_create() {
 TestResult *dwelui__test_fail(const char *message, u_int32_t line) {
     TestResult *result = test_result_create();
     result->status = TEST_RESULT_STATUS_FAILED;
-    result->message = message;
-    result->line = line;
+    result->fail_message = message;
+    result->fail_line = line;
 
     return result;
 }

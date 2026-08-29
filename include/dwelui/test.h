@@ -19,8 +19,8 @@ struct Test {
 struct TestResult {
     Test       *test;
     u_int8_t    status;
-    const char *message;
-    u_int32_t   line;
+    const char *fail_message;
+    u_int32_t   fail_line;
 };
 
 #define test_assert(expr)                                                                          \
