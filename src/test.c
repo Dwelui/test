@@ -30,7 +30,7 @@ TestList       testList       = {.count = 0, .capacity = 1024};
 TestResultList testResultList = {.count = 0, .capacity = 1024};
 
 void           print_file(const char *file);
-void print_test_status(const char *treePrefix, const char *testName, TEST_STATUS status);
+void print_test_status(const char *treePrefix, Test *test);
 void print_test_failed_information(bool nextTestExists, const char *file, TestResult *result);
 
 int  main() {
@@ -64,7 +64,7 @@ int  main() {
             treePrefix = "  └";
         }
 
-        print_test_status(treePrefix, test->name, result->status);
+        print_test_status(treePrefix, test);
 
         if (result->status == TEST_STATUS_FAILED) {
             print_test_failed_information(nextTest != nullptr, test->file, result);
@@ -118,18 +118,18 @@ TestResult *dwelui__test_pass() {
     return result;
 }
 
-void print_test_status(const char *treePrefix, const char *testName, TEST_STATUS status) {
-    switch (status) {
+void print_test_status(const char *treePrefix, Test *test) {
+    switch (test->status) {
         case TEST_STATUS_PASSED:
-            printf(C_GREEN "%s%s %s" C_RESET "\n", treePrefix, testName,
-                   test_status_to_cstring(status));
+            printf(C_GREEN "%s%s %s" C_RESET "\n", treePrefix, test->name,
+                   test_status_to_cstring(test->status));
             return;
         case TEST_STATUS_FAILED:
-            printf(C_RED "%s%s %s" C_RESET "\n", treePrefix, testName,
-                   test_status_to_cstring(status));
+            printf(C_RED "%s%s %s" C_RESET "\n", treePrefix, test->name,
+                   test_status_to_cstring(test->status));
             return;
         default:
-            printf("%s%s %s\n", treePrefix, testName, test_status_to_cstring(status));
+            printf("%s%s %s\n", treePrefix, test->name, test_status_to_cstring(test->status));
     };
 }
 
