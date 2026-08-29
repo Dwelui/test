@@ -31,6 +31,7 @@ TestResultList testResultList = {.count = 0, .capacity = 1024};
 
 void           print_file(const char *file);
 void print_test_status(const char *treePrefix, const char *testName, TEST_RESULT_STATUS status);
+void print_test_failed_information(bool nextTestExists, const char *file, TestResult *result);
 
 int  main() {
     for (size_t i = 0; i < testList.count; i++) {
@@ -65,13 +66,7 @@ int  main() {
         print_test_status(treePrefix, test->name, result->status);
 
         if (result->status == TEST_RESULT_STATUS_FAILED) {
-            const char *treeFailedPrefix = "  │";
-            if (nextTest == nullptr) {
-                treeFailedPrefix = "   ";
-            }
-
-            printf("%s  └%s:%u :: \"%s\"\n", treeFailedPrefix, test->file, result->fail_line,
-                   result->fail_message);
+            print_test_failed_information(nextTest != nullptr, test->file, result);
         }
     }
 
@@ -124,14 +119,28 @@ TestResult *dwelui__test_pass() {
 void print_test_status(const char *treePrefix, const char *testName, TEST_RESULT_STATUS status) {
     switch (status) {
         case TEST_RESULT_STATUS_PASSED:
-            printf("%s" C_GREEN "%s assertion %s" C_RESET "\n", treePrefix, testName, test_result_status_to_cstring(status));
+            printf(C_GREEN "%s%s assertion %s" C_RESET "\n", treePrefix, testName,
+                   test_result_status_to_cstring(status));
             return;
         case TEST_RESULT_STATUS_FAILED:
-            printf("%s" C_RED "%s assertion %s" C_RESET "\n", treePrefix, testName, test_result_status_to_cstring(status));
+            printf(C_RED "%s%s assertion %s" C_RESET "\n", treePrefix, testName,
+                   test_result_status_to_cstring(status));
             return;
         default:
-            printf("%s%s assertion %s\n", treePrefix, testName, test_result_status_to_cstring(status));
+            printf("%s%s assertion %s\n", treePrefix, testName,
+                   test_result_status_to_cstring(status));
     };
+}
+
+void print_test_failed_information(bool nextTestExists, const char *file, TestResult *result) {
+
+    const char *treeFailedPrefix = "  │";
+    if (false == nextTestExists) {
+        treeFailedPrefix = "   ";
+    }
+
+    printf(C_RED "%s  └%s:%u :: " C_RED "\"%s\"" C_RESET "\n", treeFailedPrefix, file, result->fail_line,
+           result->fail_message);
 }
 
 void print_file(const char *file) {
