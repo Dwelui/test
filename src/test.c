@@ -89,6 +89,7 @@ int  main() {
            testCount, testPassedCount, testFailedCount);
 
     free(testList.items);
+    free(testResultList.items);
 
     return 0;
 }
