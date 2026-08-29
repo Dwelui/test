@@ -25,8 +25,7 @@ typedef struct {
 TestList       testList       = {.count = 0, .capacity = 1024};
 TestResultList testResultList = {.count = 0, .capacity = 1024};
 
-
-void print_file(const char *file);
+void           print_file(const char *file);
 
 int            main() {
     for (size_t i = 0; i < testList.count; i++) {
@@ -36,10 +35,16 @@ int            main() {
         result->test = test;
     }
 
-    const char *file = nullptr;
+    const char *file       = nullptr;
+    const char *treePrefix = "  ├";
     for (size_t i = 0; i < testResultList.count; i++) {
         TestResult *result = &testResultList.items[i];
-        Test       *test   = result->test;
+        TestResult *nextResult =
+            i + 1 == testResultList.count ? nullptr : &testResultList.items[i + 1];
+        Test *test     = result->test;
+        Test *nextTest = nextResult == nullptr ? nullptr : nextResult->test;
+
+        treePrefix = "  ├";
 
         if (file == nullptr || strcmp(file, test->file) != 0) {
             print_file(test->file);
@@ -47,7 +52,12 @@ int            main() {
             file = test->file;
         }
 
-        printf("  ├%s assertion %s\n", test->name, test_result_status_to_cstring(result->status));
+        if (nextTest == nullptr || strcmp(test->file, nextTest->file) != 0) {
+            treePrefix = "  └";
+        }
+
+        printf("%s%s assertion %s\n", treePrefix, test->name,
+               test_result_status_to_cstring(result->status));
     }
 
     free(testList.items);
@@ -96,13 +106,12 @@ TestResult *dwelui__test_pass() {
     return result;
 }
 
-void print_file(const char *file)
-{
+void print_file(const char *file) {
     const char *startPtr = strstr(file, "/") + 1;
-    const char *endPtr = strstr(file, ".c");
-    size_t length = endPtr - startPtr;
+    const char *endPtr   = strstr(file, ".c");
+    size_t      length   = endPtr - startPtr;
 
-    char *formatted = malloc(length + 1);
+    char       *formatted = malloc(length + 1);
     memcpy(formatted, startPtr, length);
     formatted[length] = '\0';
 
@@ -111,12 +120,15 @@ void print_file(const char *file)
     free(formatted);
 }
 
-const char *test_result_status_to_cstring(TEST_RESULT_STATUS status)
-{
+const char *test_result_status_to_cstring(TEST_RESULT_STATUS status) {
     switch (status) {
-        case TEST_RESULT_STATUS_PASSED: return "passed";
-        case TEST_RESULT_STATUS_FAILED: return "failed";
-        case TEST_RESULT_STATUS_PENDING: return "pending";
-        default: abort();
+        case TEST_RESULT_STATUS_PASSED:
+            return "passed";
+        case TEST_RESULT_STATUS_FAILED:
+            return "failed";
+        case TEST_RESULT_STATUS_PENDING:
+            return "pending";
+        default:
+            abort();
     };
 }
