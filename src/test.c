@@ -35,6 +35,7 @@ int            main() {
         result->test = test;
     }
 
+    // naive implementation of output formatting, does not support multiple levels.
     const char *file       = nullptr;
     const char *treePrefix = "  ├";
     for (size_t i = 0; i < testResultList.count; i++) {
@@ -58,6 +59,15 @@ int            main() {
 
         printf("%s%s assertion %s\n", treePrefix, test->name,
                test_result_status_to_cstring(result->status));
+
+        if (result->status == TEST_RESULT_STATUS_FAILED) {
+            const char *treeFailedPrefix = "  |";
+            if (nextTest == nullptr) {
+                treeFailedPrefix = "   ";
+            }
+
+            printf("%s  └%s:%u\n", treeFailedPrefix, result->fail_message, result->fail_line);
+        }
     }
 
     free(testList.items);
