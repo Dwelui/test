@@ -9,13 +9,13 @@ typedef enum {
 } TEST_RESULT_STATUS;
 
 typedef struct {
-    Test  *tests;
+    Test  *items;
     size_t count;
     size_t capacity;
 } TestList;
 
 typedef struct {
-    TestResult *results;
+    TestResult *items;
     size_t      count;
     size_t      capacity;
 } TestResultList;
@@ -25,14 +25,14 @@ TestResultList testResultList = {.count = 0, .capacity = 1024};
 
 int            main() {
     for (size_t i = 0; i < testList.count; i++) {
-        Test       *test   = &testList.tests[i];
+        Test       *test   = &testList.items[i];
         TestResult *result = test->fn();
 
         result->test = test;
     }
 
     for (size_t i = 0; i < testResultList.count; i++) {
-        TestResult *result = &testResultList.results[i];
+        TestResult *result = &testResultList.items[i];
         Test       *test   = result->test;
 
         switch (result->status) {
@@ -48,27 +48,27 @@ int            main() {
         }
     }
 
-    free(testList.tests);
+    free(testList.items);
 
     return 0;
 }
 
 void dwelui__test_register(const char *name, const char *file, uint32_t line, TestFn fn) {
     if (testList.count == 0) {
-        testList.tests = malloc(sizeof(Test) * testList.capacity);
-        if (!testList.tests) return;
+        testList.items = malloc(sizeof(Test) * testList.capacity);
+        if (!testList.items) return;
     }
 
-    testList.tests[testList.count++] = (Test){name, file, line, fn};
+    testList.items[testList.count++] = (Test){name, file, line, fn};
 }
 
 TestResult *test_result_create() {
     if (testResultList.count == 0) {
-        testResultList.results = malloc(sizeof(testResultList) * testResultList.capacity);
-        if (!testResultList.results) return nullptr;
+        testResultList.items = malloc(sizeof(testResultList) * testResultList.capacity);
+        if (!testResultList.items) return nullptr;
     }
 
-    TestResult *result = &testResultList.results[testResultList.count++];
+    TestResult *result = &testResultList.items[testResultList.count++];
     *result            = (TestResult){.test         = nullptr,
                                       .status       = TEST_RESULT_STATUS_PENDING,
                                       .fail_message = nullptr,
