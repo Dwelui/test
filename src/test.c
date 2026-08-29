@@ -1,6 +1,7 @@
 #include <dwelui/test.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 
 typedef enum {
     TEST_RESULT_STATUS_PASSED,
@@ -31,19 +32,25 @@ int            main() {
         result->test = test;
     }
 
+    const char *file = nullptr;
     for (size_t i = 0; i < testResultList.count; i++) {
         TestResult *result = &testResultList.items[i];
         Test       *test   = result->test;
 
+        if (file == nullptr || strcmp(file, test->file) != 0) {
+            printf("%s\n", test->file); // format into "tests/unit/test_1.c" -> "unit/test_1"
+
+            file = test->file;
+        }
+
         switch (result->status) {
             case TEST_RESULT_STATUS_FAILED:
-                fprintf(stderr, "%s:%u: %s: assertion failed: %s\n", test->file, result->fail_line,
-                        test->name, result->fail_message);
+                printf("%u: %s: assertion failed: %s\n", result->fail_line, test->name,
+                       result->fail_message);
 
                 break;
             case TEST_RESULT_STATUS_PASSED:
-                fprintf(stdout, "%s:%u: %s: assertion passed \n", test->file, test->line,
-                        test->name);
+                printf("%u: %s: assertion passed \n", test->line, test->name);
                 break;
         }
     }
@@ -59,6 +66,7 @@ void dwelui__test_register(const char *name, const char *file, uint32_t line, Te
         if (!testList.items) return;
     }
 
+    // The "file" could be reusable array. To save space and checking for each test in a same file.
     testList.items[testList.count++] = (Test){name, file, line, fn};
 }
 
