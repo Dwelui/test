@@ -3,6 +3,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+#define C_RED   "\x1b[31m"
+#define C_GREEN "\x1b[32m"
+#define C_RESET "\x1b[0m"
+
 typedef enum {
     TEST_RESULT_STATUS_PASSED,
     TEST_RESULT_STATUS_FAILED,
@@ -26,8 +30,9 @@ TestList       testList       = {.count = 0, .capacity = 1024};
 TestResultList testResultList = {.count = 0, .capacity = 1024};
 
 void           print_file(const char *file);
+void print_test_status(const char *treePrefix, const char *testName, TEST_RESULT_STATUS status);
 
-int            main() {
+int  main() {
     for (size_t i = 0; i < testList.count; i++) {
         Test       *test   = &testList.items[i];
         TestResult *result = test->fn();
@@ -57,8 +62,7 @@ int            main() {
             treePrefix = "  └";
         }
 
-        printf("%s%s assertion %s\n", treePrefix, test->name,
-               test_result_status_to_cstring(result->status));
+        print_test_status(treePrefix, test->name, result->status);
 
         if (result->status == TEST_RESULT_STATUS_FAILED) {
             const char *treeFailedPrefix = "  │";
@@ -66,7 +70,8 @@ int            main() {
                 treeFailedPrefix = "   ";
             }
 
-            printf("%s  └%s:%u :: \"%s\"\n", treeFailedPrefix, test->file, result->fail_line, result->fail_message);
+            printf("%s  └%s:%u :: \"%s\"\n", treeFailedPrefix, test->file, result->fail_line,
+                   result->fail_message);
         }
     }
 
@@ -114,6 +119,19 @@ TestResult *dwelui__test_pass() {
     result->status     = TEST_RESULT_STATUS_PASSED;
 
     return result;
+}
+
+void print_test_status(const char *treePrefix, const char *testName, TEST_RESULT_STATUS status) {
+    switch (status) {
+        case TEST_RESULT_STATUS_PASSED:
+            printf("%s" C_GREEN "%s assertion %s" C_RESET "\n", treePrefix, testName, test_result_status_to_cstring(status));
+            return;
+        case TEST_RESULT_STATUS_FAILED:
+            printf("%s" C_RED "%s assertion %s" C_RESET "\n", treePrefix, testName, test_result_status_to_cstring(status));
+            return;
+        default:
+            printf("%s%s assertion %s\n", treePrefix, testName, test_result_status_to_cstring(status));
+    };
 }
 
 void print_file(const char *file) {
