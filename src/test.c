@@ -61,12 +61,12 @@ int            main() {
                test_result_status_to_cstring(result->status));
 
         if (result->status == TEST_RESULT_STATUS_FAILED) {
-            const char *treeFailedPrefix = "  |";
+            const char *treeFailedPrefix = "  │";
             if (nextTest == nullptr) {
                 treeFailedPrefix = "   ";
             }
 
-            printf("%s  └%s:%u\n", treeFailedPrefix, result->fail_message, result->fail_line);
+            printf("%s  └%s:%u :: \"%s\"\n", treeFailedPrefix, test->file, result->fail_line, result->fail_message);
         }
     }
 
