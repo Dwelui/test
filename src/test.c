@@ -3,7 +3,6 @@
 #include <stdint.h>
 #include <stdio.h>
 #include <stdlib.h>
-#include <sys/types.h>
 
 typedef enum {
     TEST_RESULT_STATUS_PASSED,
@@ -56,7 +55,7 @@ int            main() {
     return 0;
 }
 
-void dwelui__test_register(const char *name, const char *file, u_int32_t line, TestFn fn) {
+void dwelui__test_register(const char *name, const char *file, uint32_t line, TestFn fn) {
     if (testList.count == 0) {
         testList.tests = malloc(sizeof(Test) * testList.capacity);
         if (!testList.tests) return;
@@ -72,24 +71,26 @@ TestResult *test_result_create() {
     }
 
     TestResult *result = &testResultList.results[testResultList.count++];
-    *result =
-        (TestResult){.test = nullptr, .status = TEST_RESULT_STATUS_PENDING, .fail_message = nullptr, .fail_line = 0};
+    *result            = (TestResult){.test         = nullptr,
+                                      .status       = TEST_RESULT_STATUS_PENDING,
+                                      .fail_message = nullptr,
+                                      .fail_line    = 0};
 
     return result;
 }
 
-TestResult *dwelui__test_fail(const char *message, u_int32_t line) {
-    TestResult *result = test_result_create();
-    result->status = TEST_RESULT_STATUS_FAILED;
+TestResult *dwelui__test_fail(const char *message, uint32_t line) {
+    TestResult *result   = test_result_create();
+    result->status       = TEST_RESULT_STATUS_FAILED;
     result->fail_message = message;
-    result->fail_line = line;
+    result->fail_line    = line;
 
     return result;
 }
 
 TestResult *dwelui__test_pass() {
     TestResult *result = test_result_create();
-    result->status = TEST_RESULT_STATUS_PASSED;
+    result->status     = TEST_RESULT_STATUS_PASSED;
 
     return result;
 }

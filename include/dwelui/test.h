@@ -2,7 +2,6 @@
 #define DWELUI_TEST_H
 
 #include <stdint.h>
-#include <sys/types.h>
 
 typedef struct Test       Test;
 typedef struct TestResult TestResult;
@@ -12,20 +11,20 @@ typedef TestResult *(*TestFn)(void);
 struct Test {
     const char *name;
     const char *file;
-    u_int32_t   line;
+    uint32_t    line;
     TestFn      fn;
 };
 
 struct TestResult {
     Test       *test;
-    u_int8_t    status;
+    uint8_t     status;
     const char *fail_message;
-    u_int32_t   fail_line;
+    uint32_t    fail_line;
 };
 
 #define test_assert(expr)                                                                          \
     do {                                                                                           \
-        extern TestResult *dwelui__test_fail(const char *, u_int32_t);                             \
+        extern TestResult *dwelui__test_fail(const char *, uint32_t);                              \
                                                                                                    \
         if (false == (expr)) {                                                                     \
             return dwelui__test_fail(#expr, __LINE__);                                             \
@@ -35,7 +34,7 @@ struct TestResult {
 #define TEST(fn_name, body)                                                                        \
     static TestResult *fn_name(void);                                                              \
                                                                                                    \
-    extern void        dwelui__test_register(const char *, const char *, u_int32_t, TestFn);       \
+    extern void        dwelui__test_register(const char *, const char *, uint32_t, TestFn);        \
     extern TestResult *dwelui__test_pass();                                                        \
                                                                                                    \
     static void        register_##fn_name(void) __attribute__((constructor));                      \
