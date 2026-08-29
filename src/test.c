@@ -25,6 +25,9 @@ typedef struct {
 TestList       testList       = {.count = 0, .capacity = 1024};
 TestResultList testResultList = {.count = 0, .capacity = 1024};
 
+
+void print_file(const char *file);
+
 int            main() {
     for (size_t i = 0; i < testList.count; i++) {
         Test       *test   = &testList.items[i];
@@ -39,7 +42,7 @@ int            main() {
         Test       *test   = result->test;
 
         if (file == nullptr || strcmp(file, test->file) != 0) {
-            printf("%s\n", test->file); // format into "tests/unit/test_1.c" -> "unit/test_1"
+            print_file(test->file);
 
             file = test->file;
         }
@@ -91,6 +94,21 @@ TestResult *dwelui__test_pass() {
     result->status     = TEST_RESULT_STATUS_PASSED;
 
     return result;
+}
+
+void print_file(const char *file)
+{
+    const char *startPtr = strstr(file, "/") + 1;
+    const char *endPtr = strstr(file, ".c");
+    size_t length = endPtr - startPtr;
+
+    char *formatted = malloc(length + 1);
+    memcpy(formatted, startPtr, length);
+    formatted[length] = '\0';
+
+    printf("%s\n", formatted);
+
+    free(formatted);
 }
 
 const char *test_result_status_to_cstring(TEST_RESULT_STATUS status)
