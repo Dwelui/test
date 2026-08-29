@@ -27,7 +27,8 @@ int      main() {
         if (nullptr == failResult) {
             test->status = TEST_STATUS_PASSED;
         } else {
-            test->status     = TEST_STATUS_FAILED;
+            test->status = TEST_STATUS_FAILED;
+
             test->failResult = failResult;
         }
     }
