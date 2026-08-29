@@ -119,15 +119,15 @@ TestResult *dwelui__test_pass() {
 void print_test_status(const char *treePrefix, const char *testName, TEST_RESULT_STATUS status) {
     switch (status) {
         case TEST_RESULT_STATUS_PASSED:
-            printf(C_GREEN "%s%s assertion %s" C_RESET "\n", treePrefix, testName,
+            printf(C_GREEN "%s%s %s" C_RESET "\n", treePrefix, testName,
                    test_result_status_to_cstring(status));
             return;
         case TEST_RESULT_STATUS_FAILED:
-            printf(C_RED "%s%s assertion %s" C_RESET "\n", treePrefix, testName,
+            printf(C_RED "%s%s %s" C_RESET "\n", treePrefix, testName,
                    test_result_status_to_cstring(status));
             return;
         default:
-            printf("%s%s assertion %s\n", treePrefix, testName,
+            printf("%s%s %s\n", treePrefix, testName,
                    test_result_status_to_cstring(status));
     };
 }
