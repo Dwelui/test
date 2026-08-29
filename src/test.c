@@ -30,7 +30,7 @@ TestList       testList       = {.count = 0, .capacity = 1024};
 TestResultList testResultList = {.count = 0, .capacity = 1024};
 
 void           print_file(const char *file);
-void print_test_status(const char *treePrefix, Test *test);
+void           print_test_status(const char *treePrefix, Test *test);
 void print_test_failed_information(bool nextTestExists, const char *file, TestResult *result);
 
 int  main() {
@@ -83,8 +83,7 @@ void dwelui__test_register(const char *name, const char *file, uint32_t line, Te
     }
 
     // The "file" could be reusable array. To save space and checking for each test in a same file.
-    testList.items[testList.count++] =
-        (Test){name, file, line, fn, .status = TEST_STATUS_PENDING};
+    testList.items[testList.count++] = (Test){name, file, line, fn, .status = TEST_STATUS_PENDING};
 }
 
 TestResult *test_result_create() {
@@ -94,10 +93,8 @@ TestResult *test_result_create() {
     }
 
     TestResult *result = &testResultList.items[testResultList.count++];
-    *result            = (TestResult){.test         = nullptr,
-                                      .status       = TEST_STATUS_PENDING,
-                                      .fail_message = nullptr,
-                                      .fail_line    = 0};
+    *result            = (TestResult){
+        .test = nullptr, .status = TEST_STATUS_PENDING, .fail_message = nullptr, .fail_line = 0};
 
     return result;
 }
