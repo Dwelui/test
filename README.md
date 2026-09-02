@@ -5,13 +5,13 @@
 The syntax this library is striving for should be pleasant and easy to use:
 
 ```c
-TEST(
-    test_name,
-    TEST_GROUPS(group_1, group_2, group_3),
-    TEST_DATA_PROVIDER(data_provider_fn_name),
-) {
+TEST(test_name, {
     test_assert(2 + 2 == 4);
-}
+})
+TEST_OPTIONS(test_name,
+    TEST_GROUPS(group_1, group_2, group_3),
+    TEST_DATA(data_provider_fn_name)
+)
 ```
 
 To achieve this syntax discovery and test registration mechanism is essential. There are few realistic approaches:

@@ -1,10 +1,12 @@
 #include <dwelui/test.h>
+#include <stddef.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 
 #define C_RED   "\x1b[31m"
 #define C_GREEN "\x1b[32m"
+#define C_BLUE  "\x1b[34m"
 #define C_RESET "\x1b[0m"
 
 typedef enum {
@@ -26,23 +28,41 @@ typedef struct {
     size_t      capacity;
 } TestResultList;
 
-TestList       testList       = {.count = 0, .capacity = 1024};
-TestResultList testResultList = {.count = 0, .capacity = 1024};
+typedef struct {
+    TestDataProvider **items;
+    size_t             count;
+    size_t             capacity;
+} TestDataProviderList;
+
+TestList             testList             = {.count = 0, .capacity = 1024};
+TestResultList       testResultList       = {.count = 0, .capacity = 1024};
+TestDataProviderList testDataProviderList = {.count = 0, .capacity = 1024};
 
 void print_test_failed_information(bool nextTestExists, const char *file, TestResult *result);
 void print_run_header(size_t discoveredTests);
 void print_file(const char *file);
-void print_test_status(const char *treePrefix, Test *test);
+void print_test_information(const char *treePrefix, Test *test, TestResult *result);
+void run_test(Test *test, TestData data);
 
 int  main() {
     print_run_header(testList.count);
 
     for (size_t i = 0; i < testList.count; i++) {
-        Test       *test   = &testList.items[i];
-        TestResult *result = test->fn();
+        Test             *test    = &testList.items[i];
+        TestOptions       options = test->options;
 
-        test->status = result->status;
-        result->test = test;
+        TestDataProvider *dataProvider = options.dataProvider;
+        if (nullptr != dataProvider) {
+            for (size_t y = 0; y < dataProvider->count; y++) {
+                TestData data = dataProvider->items[y];
+
+                run_test(test, data);
+            }
+
+            continue;
+        }
+
+        run_test(test, (TestData){.name = nullptr, .items = nullptr});
     }
 
     // naive implementation of output formatting, does not support multiple levels.
@@ -67,7 +87,7 @@ int  main() {
             treePrefix = "  └";
         }
 
-        print_test_status(treePrefix, test);
+        print_test_information(treePrefix, test, result);
 
         if (result->status == TEST_STATUS_FAILED) {
             print_test_failed_information(nextTest != nullptr, test->file, result);
@@ -94,15 +114,24 @@ int  main() {
     free(testList.items);
     free(testResultList.items);
 
+    for (size_t i = 0; i < testDataProviderList.count; i++) {
+        TestDataProvider *dataProvider = testDataProviderList.items[i];
+        free(dataProvider->items);
+        free(dataProvider);
+    }
+    free(testDataProviderList.items);
+
     return 0;
 }
 
-void print_run_header(size_t discoveredTests) {
-    printf("libtest\n");
-    printf("Author: Dwelui\n");
-    printf("Status: starting test runtime\n");
-    printf("Discovered tests: %lu\n", discoveredTests);
-    printf("----------------------------------------\n");
+void run_test(Test *test, TestData data) {
+    TestResult *result = test->fn(data);
+    result->test       = test;
+    result->data       = data;
+
+    if (test->status == TEST_STATUS_PASSED || test->status == TEST_STATUS_PENDING) {
+        test->status = result->status;
+    }
 }
 
 void dwelui__test_register(const char *name, const char *file, uint32_t line, TestFn fn) {
@@ -112,7 +141,18 @@ void dwelui__test_register(const char *name, const char *file, uint32_t line, Te
     }
 
     // The "file" could be reusable array. To save space and checking for each test in a same file.
-    testList.items[testList.count++] = (Test){name, file, line, fn, .status = TEST_STATUS_PENDING};
+    testList.items[testList.count++] =
+        (Test){name, file, line, fn, .status = TEST_STATUS_PENDING, .options = {0}};
+}
+
+void dwelui__test_options_register(TestFn testFn, TestOptions options) {
+    for (size_t i = 0; i < testList.count; i++) {
+        Test *test = &testList.items[i];
+
+        if (test->fn == testFn) {
+            test->options = options;
+        }
+    }
 }
 
 TestResult *test_result_create() {
@@ -123,16 +163,37 @@ TestResult *test_result_create() {
 
     TestResult *result = &testResultList.items[testResultList.count++];
     *result            = (TestResult){
-        .test = nullptr, .status = TEST_STATUS_PENDING, .fail_message = nullptr, .fail_line = 0};
+        .test = nullptr, .status = TEST_STATUS_PENDING, .failMessage = nullptr, .failLine = 0};
 
     return result;
 }
 
+void dwelui__test_data_provider_register(TestDataProvider *data) {
+    if (testDataProviderList.count == 0) {
+        testDataProviderList.items =
+            malloc(sizeof(TestDataProvider) * testDataProviderList.capacity);
+        if (!testDataProviderList.items) return;
+    }
+
+    testDataProviderList.items[testDataProviderList.count++] = data;
+}
+
+TestDataProvider *dwelui__test_data_provider_initialize(const char *name) {
+    TestDataProvider *dataProvider = malloc(sizeof(TestDataProvider));
+    if (!dataProvider) return nullptr;
+    *dataProvider = (TestDataProvider){name, .items = nullptr, .count = 0, .capacity = 1024};
+
+    dataProvider->items = malloc(sizeof(TestData) * dataProvider->capacity);
+    if (!dataProvider->items) return nullptr;
+
+    return dataProvider;
+}
+
 TestResult *dwelui__test_fail(const char *message, uint32_t line) {
-    TestResult *result   = test_result_create();
-    result->status       = TEST_STATUS_FAILED;
-    result->fail_message = message;
-    result->fail_line    = line;
+    TestResult *result  = test_result_create();
+    result->status      = TEST_STATUS_FAILED;
+    result->failMessage = message;
+    result->failLine    = line;
 
     return result;
 }
@@ -144,19 +205,51 @@ TestResult *dwelui__test_pass() {
     return result;
 }
 
-void print_test_status(const char *treePrefix, Test *test) {
+void dwelui__test_data_add(TestDataProvider *dataProvider, const char *name, const void *items) {
+    dataProvider->items[dataProvider->count++] = (TestData){name, items};
+}
+
+const char *test_status_to_cstring(TEST_STATUS status) {
+    switch (status) {
+        case TEST_STATUS_PASSED:
+            return "passed";
+        case TEST_STATUS_FAILED:
+            return "failed";
+        case TEST_STATUS_PENDING:
+            return "pending";
+        default:
+            abort();
+    };
+}
+
+void print_run_header(size_t discoveredTests) {
+    printf("libtest\n");
+    printf("Author: Dwelui\n");
+    printf("Status: starting test runtime\n");
+    printf("Discovered tests: %lu\n", discoveredTests);
+    printf("----------------------------------------\n");
+}
+
+void print_test_information(const char *treePrefix, Test *test, TestResult *result) {
     switch (test->status) {
         case TEST_STATUS_PASSED:
-            printf(C_GREEN "%s%s %s" C_RESET "\n", treePrefix, test->name,
+            printf(C_GREEN "%s%s %s" C_RESET, treePrefix, test->name,
                    test_status_to_cstring(test->status));
-            return;
+            break;
         case TEST_STATUS_FAILED:
-            printf(C_RED "%s%s %s" C_RESET "\n", treePrefix, test->name,
+            printf(C_RED "%s%s %s" C_RESET, treePrefix, test->name,
                    test_status_to_cstring(test->status));
-            return;
+            break;
         default:
             printf("%s%s %s\n", treePrefix, test->name, test_status_to_cstring(test->status));
+            break;
     };
+
+    if (nullptr != result->data.name) {
+        printf(C_BLUE " with \"%s\"" C_RESET, result->data.name);
+    }
+
+    printf("\n");
 }
 
 void print_test_failed_information(bool nextTestExists, const char *file, TestResult *result) {
@@ -166,8 +259,8 @@ void print_test_failed_information(bool nextTestExists, const char *file, TestRe
         treeFailedPrefix = "   ";
     }
 
-    printf(C_RED "%s  └%s:%u :: " C_RED "\"%s\"" C_RESET "\n", treeFailedPrefix, file,
-           result->fail_line, result->fail_message);
+    printf(C_RED "%s  └%s:%u error " C_RED "\"%s\"" C_RESET "\n", treeFailedPrefix, file,
+           result->failLine, result->failMessage);
 }
 
 void print_file(const char *file) {
@@ -182,17 +275,4 @@ void print_file(const char *file) {
     printf("%s\n", formatted);
 
     free(formatted);
-}
-
-const char *test_status_to_cstring(TEST_STATUS status) {
-    switch (status) {
-        case TEST_STATUS_PASSED:
-            return "passed";
-        case TEST_STATUS_FAILED:
-            return "failed";
-        case TEST_STATUS_PENDING:
-            return "pending";
-        default:
-            abort();
-    };
 }
