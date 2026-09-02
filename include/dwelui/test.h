@@ -13,7 +13,7 @@ typedef struct TestOptions      TestOptions;
 typedef TestResult *(*TestFn)(TestData data);
 
 struct TestOptions {
-    TestDataProvider *dataProvider; // TODO: This should be a pointer array.
+    TestDataProvider *dataProvider;
 };
 
 struct TestData {
@@ -23,7 +23,7 @@ struct TestData {
 
 struct TestDataProvider {
     const char *name;
-    TestData   *items; // TODO: This should be a pointer array.
+    TestData   *items;
     size_t      count;
     size_t      capacity;
 };
@@ -38,7 +38,7 @@ struct Test {
 };
 
 struct TestResult {
-    Test       *test; // TODO: This should be a pointer array.
+    Test       *test;
     uint8_t     status;
     const char *failMessage;
     uint32_t    failLine;
@@ -59,9 +59,6 @@ extern void              dwelui__test_data_add(TestDataProvider *, const char *,
 #define test_assert(expr)                                                                          \
     if (false == (expr)) return dwelui__test_fail(#expr, __LINE__)
 
-// TODO: Going to need TestOptions for any decent additional options for TEST macro and easy option assoaciation with Test
-
-// TODO: Replace "__attribute__((constructor))" with runtime generated registry
 #define TEST(name, ...)                                                                            \
     static TestResult *name##_test(TestData data);                                                 \
                                                                                                    \
