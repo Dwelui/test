@@ -162,8 +162,11 @@ TestResult *test_result_create() {
     }
 
     TestResult *result = &testResultList.items[testResultList.count++];
-    *result            = (TestResult){
-        .test = nullptr, .status = TEST_STATUS_PENDING, .failMessage = nullptr, .failLine = 0};
+    *result            = (TestResult){.test        = nullptr,
+                                      .status      = TEST_STATUS_PENDING,
+                                      .failMessage = nullptr,
+                                      .failLine    = 0,
+                                      .data        = nullptr};
 
     return result;
 }
