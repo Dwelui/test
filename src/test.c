@@ -227,8 +227,6 @@ const char *test_status_to_cstring(TEST_STATUS status) {
             return "failed";
         case TEST_STATUS_PENDING:
             return "pending";
-        default:
-            abort();
     };
 }
 
