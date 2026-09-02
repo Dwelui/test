@@ -78,6 +78,8 @@ extern void              dwelui__test_data_add(TestDataProvider *, const char *,
         dwelui__test_options_register(testName##_test, (TestOptions){__VA_ARGS__});                \
     }
 
+// TODO: register at init time, each call for DATA_PROVIDER runs the data generation each time.
+// Generate data once and reuse it.
 #define DATA_PROVIDER(name, ...)                                                                   \
     static TestDataProvider *name() {                                                              \
         TestDataProvider *dataProvider = dwelui__test_data_provider_initialize(#name);             \

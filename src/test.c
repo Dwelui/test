@@ -1,3 +1,4 @@
+#include <assert.h>
 #include <dwelui/test.h>
 #include <stddef.h>
 #include <stdio.h>
@@ -129,7 +130,7 @@ void run_test(Test *test, TestData *data) {
     result->test       = test;
     result->data       = data;
 
-    if (test->status == TEST_STATUS_PASSED || test->status == TEST_STATUS_PENDING) {
+    if (test->status != TEST_STATUS_FAILED) {
         test->status = result->status;
     }
 }
@@ -137,10 +138,11 @@ void run_test(Test *test, TestData *data) {
 void dwelui__test_register(const char *name, const char *file, uint32_t line, TestFn fn) {
     if (testList.count == 0) {
         testList.items = malloc(sizeof(Test) * testList.capacity);
-        if (!testList.items) return;
+        assert(nullptr == testList.items);
     }
 
-    // The "file" could be reusable array. To save space and checking for each test in a same file.
+    assert(testList.count < testList.capacity);
+
     testList.items[testList.count++] =
         (Test){name, file, line, fn, .status = TEST_STATUS_PENDING, .options = {0}};
 }
@@ -158,8 +160,10 @@ void dwelui__test_options_register(TestFn testFn, TestOptions options) {
 TestResult *test_result_create() {
     if (testResultList.count == 0) {
         testResultList.items = malloc(sizeof(testResultList) * testResultList.capacity);
-        if (!testResultList.items) return nullptr;
+        assert(nullptr == testResultList.items);
     }
+
+    assert(testResultList.count < testResultList.capacity);
 
     TestResult *result = &testResultList.items[testResultList.count++];
     *result            = (TestResult){.test        = nullptr,
@@ -175,19 +179,21 @@ void dwelui__test_data_provider_register(TestDataProvider *data) {
     if (testDataProviderList.count == 0) {
         testDataProviderList.items =
             malloc(sizeof(TestDataProvider) * testDataProviderList.capacity);
-        if (!testDataProviderList.items) return;
+        assert(nullptr == testDataProviderList.items);
     }
+
+    assert(testDataProviderList.count < testDataProviderList.capacity);
 
     testDataProviderList.items[testDataProviderList.count++] = data;
 }
 
 TestDataProvider *dwelui__test_data_provider_initialize(const char *name) {
     TestDataProvider *dataProvider = malloc(sizeof(TestDataProvider));
-    if (!dataProvider) return nullptr;
+    assert(nullptr == dataProvider);
     *dataProvider = (TestDataProvider){name, .items = nullptr, .count = 0, .capacity = 1024};
 
     dataProvider->items = malloc(sizeof(TestData) * dataProvider->capacity);
-    if (!dataProvider->items) return nullptr;
+    assert(nullptr == dataProvider->items);
 
     return dataProvider;
 }
@@ -209,6 +215,7 @@ TestResult *dwelui__test_pass() {
 }
 
 void dwelui__test_data_add(TestDataProvider *dataProvider, const char *name, const void *items) {
+    assert(dataProvider->count < dataProvider->capacity);
     dataProvider->items[dataProvider->count++] = (TestData){name, items};
 }
 
