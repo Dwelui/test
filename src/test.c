@@ -42,7 +42,7 @@ void print_test_failed_information(bool nextTestExists, const char *file, TestRe
 void print_run_header(size_t discoveredTests);
 void print_file(const char *file);
 void print_test_information(const char *treePrefix, Test *test, TestResult *result);
-void run_test(Test *test, TestData data);
+void run_test(Test *test, TestData *data);
 
 int  main() {
     print_run_header(testList.count);
@@ -54,7 +54,7 @@ int  main() {
         TestDataProvider *dataProvider = options.dataProvider;
         if (nullptr != dataProvider) {
             for (size_t y = 0; y < dataProvider->count; y++) {
-                TestData data = dataProvider->items[y];
+                TestData *data = &dataProvider->items[y];
 
                 run_test(test, data);
             }
@@ -62,7 +62,7 @@ int  main() {
             continue;
         }
 
-        run_test(test, (TestData){.name = nullptr, .items = nullptr});
+        run_test(test, nullptr);
     }
 
     // naive implementation of output formatting, does not support multiple levels.
@@ -124,7 +124,7 @@ int  main() {
     return 0;
 }
 
-void run_test(Test *test, TestData data) {
+void run_test(Test *test, TestData *data) {
     TestResult *result = test->fn(data);
     result->test       = test;
     result->data       = data;
@@ -245,8 +245,9 @@ void print_test_information(const char *treePrefix, Test *test, TestResult *resu
             break;
     };
 
-    if (nullptr != result->data.name) {
-        printf(C_BLUE " with \"%s\"" C_RESET, result->data.name);
+    TestData *data = result->data;
+    if (nullptr != data) {
+        printf(C_BLUE " with \"%s\"" C_RESET, data->name);
     }
 
     printf("\n");

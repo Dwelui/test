@@ -10,7 +10,7 @@ typedef struct TestData         TestData;
 typedef struct TestDataProvider TestDataProvider;
 typedef struct TestOptions      TestOptions;
 
-typedef TestResult *(*TestFn)(TestData data);
+typedef TestResult *(*TestFn)(TestData *data);
 
 struct TestOptions {
     TestDataProvider *dataProvider;
@@ -42,8 +42,7 @@ struct TestResult {
     uint8_t     status;
     const char *failMessage;
     uint32_t    failLine;
-    TestData
-        data; // TODO: This should be a pointer to not dublicate TestData struct across TestResults
+    TestData   *data;
 };
 
 extern void              dwelui__test_register(const char *, const char *, uint32_t, TestFn);
@@ -60,14 +59,14 @@ extern void              dwelui__test_data_add(TestDataProvider *, const char *,
     if (false == (expr)) return dwelui__test_fail(#expr, __LINE__)
 
 #define TEST(name, ...)                                                                            \
-    static TestResult *name##_test(TestData data);                                                 \
+    static TestResult *name##_test(TestData *data);                                                \
                                                                                                    \
     static void        register_##name##_test(void) __attribute__((constructor));                  \
     static void        register_##name##_test(void) {                                              \
         dwelui__test_register(#name, __FILE__, __LINE__, name##_test);                             \
     }                                                                                              \
                                                                                                    \
-    static TestResult *name##_test(TestData data) {                                                \
+    static TestResult *name##_test(TestData *data) {                                               \
         (void)data;                                                                                \
         __VA_ARGS__                                                                                \
         return dwelui__test_pass();                                                                \
