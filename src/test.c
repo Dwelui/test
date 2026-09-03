@@ -238,6 +238,8 @@ const char *test_status_to_cstring(TEST_STATUS status) {
         case TEST_STATUS_PENDING:
             return "pending";
     };
+
+    assert(true);
 }
 
 void print_run_header(size_t discoveredTests) {
