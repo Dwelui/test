@@ -159,7 +159,7 @@ void dwelui__test_options_register(TestFn testFn, TestOptions options) {
 
 TestResult *test_result_create() {
     if (testResultList.count == 0) {
-        testResultList.items = malloc(sizeof(testResultList) * testResultList.capacity);
+        testResultList.items = malloc(sizeof(TestResult) * testResultList.capacity);
         assert(nullptr != testResultList.items);
     }
 
