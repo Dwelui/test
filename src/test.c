@@ -138,7 +138,7 @@ void run_test(Test *test, TestData *data) {
 void dwelui__test_register(const char *name, const char *file, uint32_t line, TestFn fn) {
     if (testList.count == 0) {
         testList.items = malloc(sizeof(Test) * testList.capacity);
-        assert(nullptr == testList.items);
+        assert(nullptr != testList.items);
     }
 
     assert(testList.count < testList.capacity);
@@ -160,7 +160,7 @@ void dwelui__test_options_register(TestFn testFn, TestOptions options) {
 TestResult *test_result_create() {
     if (testResultList.count == 0) {
         testResultList.items = malloc(sizeof(testResultList) * testResultList.capacity);
-        assert(nullptr == testResultList.items);
+        assert(nullptr != testResultList.items);
     }
 
     assert(testResultList.count < testResultList.capacity);
@@ -179,7 +179,7 @@ void dwelui__test_data_provider_register(const char *name) {
     if (testDataProviderList.count == 0) {
         testDataProviderList.items =
             malloc(sizeof(TestDataProvider) * testDataProviderList.capacity);
-        assert(nullptr == testDataProviderList.items);
+        assert(nullptr != testDataProviderList.items);
     }
 
     assert(testDataProviderList.count < testDataProviderList.capacity);
@@ -192,7 +192,7 @@ void dwelui__test_data_provider_register(const char *name) {
     dataProvider        = testDataProviderList.items[testDataProviderList.count];
     *dataProvider       = (TestDataProvider){name, .items = nullptr, .count = 0, .capacity = 1024};
     dataProvider->items = malloc(sizeof(TestData) * dataProvider->capacity);
-    assert(nullptr == dataProvider->items);
+    assert(nullptr != dataProvider->items);
 
     testDataProviderList.items[testDataProviderList.count++] = dataProvider;
 }
