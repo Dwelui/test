@@ -30,7 +30,7 @@ typedef struct {
 } TestResultList;
 
 typedef struct {
-    TestDataProvider **items;
+    TestDataProvider *items;
     size_t             count;
     size_t             capacity;
 } TestDataProviderList;
@@ -116,9 +116,8 @@ int  main() {
     free(testResultList.items);
 
     for (size_t i = 0; i < testDataProviderList.count; i++) {
-        TestDataProvider *dataProvider = testDataProviderList.items[i];
+        TestDataProvider *dataProvider = &testDataProviderList.items[i];
         free(dataProvider->items);
-        free(dataProvider);
     }
     free(testDataProviderList.items);
 
@@ -189,17 +188,17 @@ void dwelui__test_data_provider_register(const char *name) {
         return;
     }
 
-    dataProvider        = testDataProviderList.items[testDataProviderList.count];
+    dataProvider        = &testDataProviderList.items[testDataProviderList.count];
     *dataProvider       = (TestDataProvider){name, .items = nullptr, .count = 0, .capacity = 1024};
     dataProvider->items = malloc(sizeof(TestData) * dataProvider->capacity);
     assert(nullptr != dataProvider->items);
 
-    testDataProviderList.items[testDataProviderList.count++] = dataProvider;
+    testDataProviderList.items[testDataProviderList.count++] = *dataProvider;
 }
 
 TestDataProvider *dwelui__test_data_provider_find(const char *name) {
     for (size_t i = 0; i < testDataProviderList.count; i++) {
-        TestDataProvider *dataProvider = testDataProviderList.items[i];
+        TestDataProvider *dataProvider = &testDataProviderList.items[i];
         if (strcmp(dataProvider->name, name) == 0) {
             return dataProvider;
         }
