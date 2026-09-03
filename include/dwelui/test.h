@@ -49,8 +49,8 @@ extern void              dwelui__test_register(const char *, const char *, uint3
 extern TestResult       *dwelui__test_fail(const char *, uint32_t);
 extern TestResult       *dwelui__test_pass();
 
-extern void              dwelui__test_data_provider_register(TestDataProvider *);
-extern TestDataProvider *dwelui__test_data_provider_initialize(const char *);
+extern void              dwelui__test_data_provider_register(const char *);
+extern TestDataProvider *dwelui__test_data_provider_find(const char *);
 
 extern void              dwelui__test_options_register(TestFn, TestOptions);
 extern void              dwelui__test_data_add(TestDataProvider *, const char *, const void *);
@@ -78,14 +78,16 @@ extern void              dwelui__test_data_add(TestDataProvider *, const char *,
         dwelui__test_options_register(testName##_test, (TestOptions){__VA_ARGS__});                \
     }
 
-// TODO: register at init time, each call for DATA_PROVIDER runs the data generation each time.
-// Generate data once and reuse it.
 #define DATA_PROVIDER(name, ...)                                                                   \
-    static TestDataProvider *name##_data_provider();                                                               \
+    static TestDataProvider *name##_data_provider();                                               \
                                                                                                    \
-    static TestDataProvider *name##_data_provider() {                                                              \
-        TestDataProvider *dataProvider = dwelui__test_data_provider_initialize(#name);             \
-        dwelui__test_data_provider_register(dataProvider);                                         \
+    static void              register_##name##_data_provider(void) __attribute__((constructor));   \
+    static void              register_##name##_data_provider(void) {                               \
+        dwelui__test_data_provider_register(#name);                                                \
+    }                                                                                              \
+                                                                                                   \
+    static TestDataProvider *name##_data_provider() {                                              \
+        TestDataProvider *dataProvider = dwelui__test_data_provider_find(#name);                   \
         __VA_ARGS__                                                                                \
         return dataProvider;                                                                       \
     }

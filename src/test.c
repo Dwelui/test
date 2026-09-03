@@ -175,7 +175,7 @@ TestResult *test_result_create() {
     return result;
 }
 
-void dwelui__test_data_provider_register(TestDataProvider *data) {
+void dwelui__test_data_provider_register(const char *name) {
     if (testDataProviderList.count == 0) {
         testDataProviderList.items =
             malloc(sizeof(TestDataProvider) * testDataProviderList.capacity);
@@ -184,18 +184,28 @@ void dwelui__test_data_provider_register(TestDataProvider *data) {
 
     assert(testDataProviderList.count < testDataProviderList.capacity);
 
-    testDataProviderList.items[testDataProviderList.count++] = data;
-}
+    TestDataProvider *dataProvider = dwelui__test_data_provider_find(name);
+    if (nullptr != dataProvider) {
+        return;
+    }
 
-TestDataProvider *dwelui__test_data_provider_initialize(const char *name) {
-    TestDataProvider *dataProvider = malloc(sizeof(TestDataProvider));
-    assert(nullptr == dataProvider);
-    *dataProvider = (TestDataProvider){name, .items = nullptr, .count = 0, .capacity = 1024};
-
+    dataProvider        = testDataProviderList.items[testDataProviderList.count];
+    *dataProvider       = (TestDataProvider){name, .items = nullptr, .count = 0, .capacity = 1024};
     dataProvider->items = malloc(sizeof(TestData) * dataProvider->capacity);
     assert(nullptr == dataProvider->items);
 
-    return dataProvider;
+    testDataProviderList.items[testDataProviderList.count++] = dataProvider;
+}
+
+TestDataProvider *dwelui__test_data_provider_find(const char *name) {
+    for (size_t i = 0; i < testDataProviderList.count; i++) {
+        TestDataProvider *dataProvider = testDataProviderList.items[i];
+        if (strcmp(dataProvider->name, name) == 0) {
+            return dataProvider;
+        }
+    }
+
+    return nullptr;
 }
 
 TestResult *dwelui__test_fail(const char *message, uint32_t line) {
