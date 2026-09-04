@@ -19,7 +19,7 @@ struct TestOptions {
 
 struct TestData {
     const char *name;
-    const void *items;
+    const void *data;
 };
 
 struct TestDataProvider {
