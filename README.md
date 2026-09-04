@@ -7,7 +7,7 @@ The syntax this library is striving for should be pleasant and easy to use, look
 ## Goals
 
 - [ ] Move to `Generated registry` from `Platform specific` solutions for auto registered tests
-- [x] Add `Data Prividers`
+- [x] Add `Data Providers`
 - [ ] Add `Groups`
 - [ ] Add filtering by file path fragment
 - [ ] Add filtering by test name fragment
