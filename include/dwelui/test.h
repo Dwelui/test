@@ -46,15 +46,15 @@ struct TestResult {
     TestData   *data;
 };
 
-extern void              dwelui__test_register(const char *, const char *, uint32_t, TestFn);
-extern TestResult       *dwelui__test_fail(const char *, uint32_t);
-extern TestResult       *dwelui__test_pass();
+void              dwelui__test_register(const char *, const char *, uint32_t, TestFn);
+TestResult       *dwelui__test_fail(const char *, uint32_t);
+TestResult       *dwelui__test_pass();
 
-extern void              dwelui__test_data_provider_register(const char *, TestDataProviderFn);
-extern TestDataProvider *dwelui__test_data_provider_find(const char *);
+void              dwelui__test_data_provider_register(const char *, TestDataProviderFn);
+TestDataProvider *dwelui__test_data_provider_find(const char *);
 
-extern void              dwelui__test_options_register(TestFn, TestOptions);
-extern void              dwelui__test_data_add(TestDataProvider *, const char *, const void *);
+void              dwelui__test_options_register(TestFn, TestOptions);
+void              dwelui__test_data_add(TestDataProvider *, const char *, const void *);
 
 #define test_assert(expr)                                                                          \
     if (false == (expr)) return dwelui__test_fail(#expr, __LINE__)
@@ -97,6 +97,6 @@ extern void              dwelui__test_data_add(TestDataProvider *, const char *,
     }
 
 #define test_data_add(name, items) dwelui__test_data_add(dataProvider, name, &items)
-#define test_data_get(type) ((const type*)(data))
+#define test_data_get(type)        ((const type *)(data))
 
 #endif // DWELUI_TEST_H
