@@ -174,7 +174,7 @@ TestResult *test_result_create() {
     return result;
 }
 
-void dwelui__test_data_provider_register(const char *name) {
+void dwelui__test_data_provider_register(const char *name, TestDataProviderFn fn) {
     if (testDataProviderList.count == 0) {
         testDataProviderList.items =
             malloc(sizeof(TestDataProvider) * testDataProviderList.capacity);
@@ -194,6 +194,8 @@ void dwelui__test_data_provider_register(const char *name) {
     assert(nullptr != dataProvider->items);
 
     testDataProviderList.items[testDataProviderList.count++] = *dataProvider;
+
+    fn();
 }
 
 TestDataProvider *dwelui__test_data_provider_find(const char *name) {

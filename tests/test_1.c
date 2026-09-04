@@ -16,10 +16,10 @@ TEST(addition, {
     const AdditionDigits *digits = data->items; // Can use any kind of data with opaque ponter, the test user just has to know what it uses.
     test_assert(digits->a + digits->b == digits->c);
 })
-TEST_OPTIONS(addition, .dataProvider = validAdditionDigits_data_provider())
+TEST_OPTIONS(addition, .dataProvider = validAdditionDigits())
 
 TEST(subtraction, {
     const int *digits = data->items;
     test_assert(digits[0] - digits[1] == digits[2]);
 })
-TEST_OPTIONS(subtraction, .dataProvider = validAdditionDigits_data_provider())
+TEST_OPTIONS(subtraction, .dataProvider = validAdditionDigits())
