@@ -13,13 +13,13 @@ DATA_PROVIDER(validAdditionDigits, {
 })
 
 TEST(addition, {
-    const AdditionDigits *digits = data->data; // Can use any kind of data with opaque ponter, the test user just has to know what it uses.
+    const AdditionDigits *digits = test_data_get(AdditionDigits);
     test_assert(digits->a + digits->b == digits->c);
 })
 TEST_OPTIONS(addition, .dataProvider = validAdditionDigits())
 
 TEST(subtraction, {
-    const int *digits = data->data;
+    const int *digits = test_data_get(int);
     test_assert(digits[0] - digits[1] == digits[2]);
 })
 TEST_OPTIONS(subtraction, .dataProvider = validAdditionDigits())

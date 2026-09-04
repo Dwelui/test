@@ -125,7 +125,7 @@ int  main() {
 }
 
 void run_test(Test *test, TestData *data) {
-    TestResult *result = test->fn(data);
+    TestResult *result = test->fn(nullptr != data ? data->data : nullptr);
     result->test       = test;
     result->data       = data;
 
