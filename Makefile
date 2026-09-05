@@ -9,7 +9,7 @@ TARGET := build/libtest.a
 CFLAGS := -Wall -Wextra -Wpedantic -std=c23 -Iinclude
 
 SRC := $(wildcard src/*.c)
-OBJ := $(SRC:src/%.c=build/obj/%.o)
+OBJ := $(SRC:src/%.c=build/source/obj/%.o)
 
 
 # Tests ---------------------------------
@@ -30,7 +30,7 @@ $(TARGET): $(OBJ)
 	@mkdir -p $(@D)
 	$(AR) $(ARFLAGS) $@ $^
 
-build/obj/%.o: src/%.c
+build/source/obj/%.o: src/%.c
 	@mkdir -p $(@D)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
