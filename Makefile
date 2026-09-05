@@ -3,20 +3,27 @@ CC := gcc
 AR := ar
 ARFLAGS := rcs
 
-TARGET := build/testlib.a
-TEST_RUNNER := build/tests/run-tests
+# Source --------------------------------
+TARGET := build/libtest.a
 
 CFLAGS := -Wall -Wextra -Wpedantic -std=c23 -Iinclude
-TEST_CFLAGS := $(CFLAGS) -g -fsanitize=address -O0
-TEST_LDFLAGS := -fsanitize=address
 
 SRC := $(wildcard src/*.c)
 OBJ := $(SRC:src/%.c=build/obj/%.o)
+
+
+# Tests ---------------------------------
+TEST_RUNNER := build/tests/run-tests
+
+TEST_CFLAGS := $(CFLAGS) -g -fsanitize=address -O0
+TEST_LDFLAGS := -fsanitize=address
+
 TEST_SRC := $(wildcard tests/*.c)
-TEST_OBJ := $(TEST_SRC:tests/%.c=build/test-obj/%.o)
+TEST_OBJ := $(TEST_SRC:tests/%.c=build/tests/obj/%.o)
 
-.PHONY: all test check clean compdb
+.PHONY: all test clean compdb
 
+# Source --------------------------------
 all: $(TARGET)
 
 $(TARGET): $(OBJ)
@@ -27,7 +34,9 @@ build/obj/%.o: src/%.c
 	@mkdir -p $(@D)
 	@$(CC) $(CFLAGS) -c $< -o $@
 
-build/test-obj/%.o: tests/%.c
+
+# Tests ---------------------------------
+build/tests/obj/%.o: tests/%.c
 	@mkdir -p $(@D)
 	@$(CC) $(TEST_CFLAGS) -c $< -o $@
 
@@ -38,6 +47,8 @@ $(TEST_RUNNER): $(OBJ) $(TEST_OBJ)
 test: $(TEST_RUNNER)
 	@$(TEST_RUNNER)
 
+
+# Tools ---------------------------------
 clean:
 	rm -rf build
 
