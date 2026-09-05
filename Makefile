@@ -3,7 +3,7 @@ CC := gcc
 AR := ar
 ARFLAGS := rcs
 
-TARGET := build/libtest.a
+TARGET := build/testlib.a
 TEST_RUNNER := build/tests/run-tests
 
 CFLAGS := -Wall -Wextra -Wpedantic -std=c23 -Iinclude
