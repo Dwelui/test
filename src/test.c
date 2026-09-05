@@ -244,7 +244,7 @@ const char *test_status_to_cstring(TEST_STATUS status) {
 }
 
 void print_run_header(size_t discoveredTests) {
-    printf("testlib\n");
+    printf("test\n");
     printf("Author: Dwelui\n");
     printf("Status: starting test runtime\n");
     printf("Discovered tests: %lu\n", discoveredTests);
