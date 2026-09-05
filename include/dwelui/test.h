@@ -46,6 +46,8 @@ struct TestResult {
     TestData   *data;
 };
 
+int               test_run();
+
 void              dwelui__test_register(const char *, const char *, uint32_t, TestFn);
 TestResult       *dwelui__test_fail(const char *, uint32_t);
 TestResult       *dwelui__test_pass();

@@ -45,7 +45,7 @@ void print_file(const char *file);
 void print_test_information(const char *treePrefix, Test *test, TestResult *result);
 void run_test(Test *test, TestData *data);
 
-int  main() {
+int test_run() {
     print_run_header(testList.count);
 
     for (size_t i = 0; i < testList.count; i++) {
@@ -287,7 +287,7 @@ void print_test_failed_information(bool nextTestExists, const char *file, TestRe
 
 void print_file(const char *file) {
     const char *startPtr = strstr(file, "/") + 1;
-    const char *endPtr   = strstr(file, ".c");
+    const char *endPtr   = strstr(file, ".test.c");
     size_t      length   = endPtr - startPtr;
 
     char       *formatted = malloc(length + 1);
