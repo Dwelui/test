@@ -45,7 +45,7 @@ void print_file(const char *file);
 void print_test_information(const char *treePrefix, Test *test, TestResult *result);
 void run_test(Test *test, TestData *data);
 
-int test_run() {
+int test() {
     print_run_header(testList.count);
 
     for (size_t i = 0; i < testList.count; i++) {
