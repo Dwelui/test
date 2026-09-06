@@ -7,6 +7,8 @@ The syntax this library is striving for should be pleasant and easy to use, look
 ## Goals
 
 - [ ] Move to `Generated registry` from `Platform specific` solutions for auto registered tests
+- [ ] Detect when `test` did not run any assertions. Mark it as empty
+- [ ] Return correct status to `environment` when `tests` fail.
 - [x] Add `Data Providers`
 - [ ] Add `Groups`
 - [ ] Add filtering by file path fragment
