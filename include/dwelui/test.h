@@ -62,15 +62,15 @@ void              dwelui__test_data_add(TestDataProvider *, const char *, const 
     if (false == (expr)) return dwelui__test_fail(#expr, __LINE__)
 
 #define TEST(name, ...)                                                                            \
-    static TestResult *name##_test(const void *data);                                              \
+    static TestResult *name##_test(const void *__data);                                            \
                                                                                                    \
     static void        register_##name##_test(void) __attribute__((constructor));                  \
     static void        register_##name##_test(void) {                                              \
         dwelui__test_register(#name, __FILE__, __LINE__, name##_test);                             \
     }                                                                                              \
                                                                                                    \
-    static TestResult *name##_test(const void *data) {                                             \
-        (void)data;                                                                                \
+    static TestResult *name##_test(const void *__data) {                                           \
+        (void)__data;                                                                              \
         __VA_ARGS__                                                                                \
         return dwelui__test_pass();                                                                \
     }
@@ -99,6 +99,6 @@ void              dwelui__test_data_add(TestDataProvider *, const char *, const 
     }
 
 #define test_data_add(name, items) dwelui__test_data_add(dataProvider, name, &items)
-#define test_data_get(type)        ((const type *)(data))
+#define test_data_get(type)        ((const type *)(__data))
 
 #endif // DWELUI_TEST_H
