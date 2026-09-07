@@ -10,7 +10,8 @@ The syntax this library is striving for should be pleasant and easy to use, look
 - [ ] Detect when `test` did not run any assertions. Mark it as empty
 - [ ] Return correct status to `environment` when `tests` fail.
 - [x] Add `Data Providers`
-- [ ] Add `Groups`
+- [-] Add `Groups` <- use file name
 - [ ] Add filtering by file path fragment
-- [ ] Add filtering by test name fragment
 - [ ] Support multiple output formats
+- [ ] Change output by coloring each tests name as gray/light gray and leaving only status color coded.
+- [ ] Total should show: test totals and test result total which works with `data providers`.
