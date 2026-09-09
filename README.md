@@ -6,10 +6,14 @@ The syntax this library is striving for should be pleasant and easy to use, look
 
 ## Goals
 
+- [ ] Memory allocation error on file without .test.
+- [ ] Output graceful error for `test_data_get` when `__data` is `nullptr`, used without data provider
 - [ ] Move to `Generated registry` from `Platform specific` solutions for auto registered tests
 - [ ] Detect when `test` did not run any assertions. Mark it as empty
 - [ ] Return correct status to `environment` when `tests` fail.
 - [x] Add `Data Providers`
+- [ ] Rename `Data Providers` to `Test Data Providers`
+- [ ] Solve `Test Data Providers` name collision over files
 - [-] Add `Groups` <- use file name
 - [ ] Add filtering by file path fragment
 - [ ] Support multiple output formats
