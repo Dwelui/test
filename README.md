@@ -13,8 +13,7 @@ The syntax this library is striving for should be pleasant and easy to use, look
 - [ ] Return correct status to `environment` when `tests` fail.
 - [x] Add `Data Providers`
 - [x] Rename `Data Providers` to `Test Data Providers`
-- [ ] Solve `Test Data Providers` name collision over files
-- [-] Add `Groups` <- use file name
+- [x] Solve `Test Data Providers` name collision over files
 - [ ] Add filtering by file path fragment
 - [ ] Support multiple output formats
 - [x] Change output by coloring each tests name as gray/light gray and leaving only status color coded.

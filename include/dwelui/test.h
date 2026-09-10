@@ -81,8 +81,8 @@ void              dwelui__test_data_add(TestDataProvider *, const char *, const 
         dwelui__test_options_register(testName##_test, (TestOptions){__VA_ARGS__});                \
     }
 
-#define TEST_DATA_PROVIDER(name, ...)                                                                   \
-    void        name##_data_provider();                                                            \
+#define TEST_DATA_PROVIDER(name, ...)                                                              \
+    static void name##_data_provider();                                                            \
                                                                                                    \
     static void register_##name##_data_provider(void) __attribute__((constructor));                \
     static void register_##name##_data_provider(void) {                                            \
@@ -93,7 +93,7 @@ void              dwelui__test_data_add(TestDataProvider *, const char *, const 
         return dwelui__test_data_provider_find(#name);                                             \
     }                                                                                              \
                                                                                                    \
-    void name##_data_provider() {                                                                  \
+    static void name##_data_provider() {                                                           \
         TestDataProvider *dataProvider = dwelui__test_data_provider_find(#name);                   \
         __VA_ARGS__                                                                                \
     }
