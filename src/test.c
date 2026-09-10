@@ -267,7 +267,7 @@ void print_test_failed_information(bool nextTestExists, const char *file, TestRe
         treeFailedPrefix = "   ";
     }
 
-    printf(C_RED "%s  └%s:%u error " C_RED "\"%s\"" C_RESET "\n", treeFailedPrefix, file,
+    printf("%s " C_RED " └%s:%u error " C_RED "\"%s\"" C_RESET "\n", treeFailedPrefix, file,
            result->failLine, result->failMessage);
 }
 
