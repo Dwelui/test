@@ -18,4 +18,4 @@ The syntax this library is striving for should be pleasant and easy to use, look
 - [ ] Add filtering by file path fragment
 - [ ] Support multiple output formats
 - [x] Change output by coloring each tests name as gray/light gray and leaving only status color coded.
-- [ ] Total should show: test totals and test result total which works with `data providers`.
+- [x] Total should show: test totals and test result total which works with `data providers`.

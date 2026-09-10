@@ -40,14 +40,14 @@ TestResultList       testResultList       = {.count = 0, .capacity = 1024};
 TestDataProviderList testDataProviderList = {.count = 0, .capacity = 1024};
 
 void print_test_failed_information(bool nextTestExists, const char *file, TestResult *result);
-void print_run_header(size_t discoveredTests);
+void print_run_header(size_t discoveredTests, size_t discoveredDataProviders);
 void print_file(const char *file);
 void print_test_information(const char *treePrefix, Test *test, TestResult *result);
 void print_totals_information();
 void run_test(Test *test, TestData *data);
 
 int  test() {
-    print_run_header(testList.count);
+    print_run_header(testList.count, testDataProviderList.count);
 
     for (size_t i = 0; i < testList.count; i++) {
         Test             *test    = &testList.items[i];
@@ -229,11 +229,12 @@ const char *test_status_to_cstring(TEST_STATUS status) {
     };
 }
 
-void print_run_header(size_t discoveredTests) {
+void print_run_header(size_t discoveredTests, size_t discoveredDataProviders) {
     printf("test\n");
     printf("Author: Dwelui\n");
-    printf("Status: starting test runtime\n");
+    printf("Status: running tests\n");
     printf("Discovered tests: %lu\n", discoveredTests);
+    printf("Discovered data providers: %lu\n", discoveredDataProviders);
     printf("----------------------------------------\n");
 }
 
