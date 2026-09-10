@@ -254,11 +254,11 @@ void print_run_header(size_t discoveredTests) {
 void print_test_information(const char *treePrefix, Test *test, TestResult *result) {
     switch (test->status) {
         case TEST_STATUS_PASSED:
-            printf(C_GREEN "%s%s %s" C_RESET, treePrefix, test->name,
+            printf("%s%s " C_GREEN "%s" C_RESET, treePrefix, test->name,
                    test_status_to_cstring(test->status));
             break;
         case TEST_STATUS_FAILED:
-            printf(C_RED "%s%s %s" C_RESET, treePrefix, test->name,
+            printf("%s%s " C_RED "%s" C_RESET, treePrefix, test->name,
                    test_status_to_cstring(test->status));
             break;
         default:
