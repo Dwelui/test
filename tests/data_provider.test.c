@@ -1,7 +1,7 @@
 #include <dwelui/test.h>
 
 typedef struct { int a, b, c; } AdditionDigits;
-DATA_PROVIDER(validAdditionDigits, {
+TEST_DATA_PROVIDER(validAdditionDigits, {
     static const AdditionDigits items1 = {1, 1, 2};
     test_data_add("a=1, b=1, c=2", items1);
 
