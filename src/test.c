@@ -41,7 +41,7 @@ TestDataProviderList testDataProviderList = {.count = 0, .capacity = 1024};
 
 void print_test_failed_information(bool nextTestExists, const char *file, TestResult *result);
 void print_run_header(size_t discoveredTests, size_t discoveredDataProviders);
-void print_file(const char *file);
+void print_test_file(const char *file);
 void print_test_information(const char *treePrefix, Test *test, TestResult *result);
 void print_totals_information();
 void run_test(Test *test, TestData *data);
@@ -80,7 +80,7 @@ int  test() {
         treePrefix = "  ├";
 
         if (file == nullptr || strcmp(file, test->file) != 0) {
-            print_file(test->file);
+            print_test_file(test->file);
 
             file = test->file;
         }
@@ -272,12 +272,20 @@ void print_test_failed_information(bool nextTestExists, const char *file, TestRe
            result->failLine, result->failMessage);
 }
 
-void print_file(const char *file) {
-    const char *startPtr = strstr(file, "/") + 1;
-    const char *endPtr   = strstr(file, ".test.c");
-    size_t      length   = endPtr - startPtr;
+void print_test_file(const char *file) {
+    char *startPtr = (char *)strstr(file, "/") + 1;
+    if (nullptr == startPtr) {
+        startPtr = (char *)file;
+    }
 
-    char       *formatted = malloc(length + 1);
+    char *endPtr = (char *)strstr(file, ".test.c");
+    if (nullptr == endPtr) {
+        endPtr = (char *)strstr(file, ".c");
+    }
+
+    size_t length = endPtr - startPtr;
+
+    char  *formatted = malloc(length + 1);
     memcpy(formatted, startPtr, length);
     formatted[length] = '\0';
 
@@ -318,11 +326,11 @@ void print_totals_information() {
         }
     }
 
-    printf("Total tests:   %5lu | " C_GREEN "Passed: %5lu" C_RESET " | " C_RED "Failed: %5lu" C_RESET
-           " \n",
+    printf("Total tests:   %5lu | " C_GREEN "Passed: %5lu" C_RESET " | " C_RED
+           "Failed: %5lu" C_RESET " \n",
            testCount, testPassedCount, testFailedCount);
 
-    printf("Total results: %5lu | " C_GREEN "Passed: %5lu" C_RESET " | " C_RED "Failed: %5lu" C_RESET
-           " \n",
+    printf("Total results: %5lu | " C_GREEN "Passed: %5lu" C_RESET " | " C_RED
+           "Failed: %5lu" C_RESET " \n",
            testResultCount, testResultPassedCount, testResultFailedCount);
 }
