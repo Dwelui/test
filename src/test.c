@@ -31,8 +31,8 @@ typedef struct {
 
 typedef struct {
     TestDataProvider *items;
-    size_t             count;
-    size_t             capacity;
+    size_t            count;
+    size_t            capacity;
 } TestDataProviderList;
 
 TestList             testList             = {.count = 0, .capacity = 1024};
@@ -43,9 +43,10 @@ void print_test_failed_information(bool nextTestExists, const char *file, TestRe
 void print_run_header(size_t discoveredTests);
 void print_file(const char *file);
 void print_test_information(const char *treePrefix, Test *test, TestResult *result);
+void print_totals_information();
 void run_test(Test *test, TestData *data);
 
-int test() {
+int  test() {
     print_run_header(testList.count);
 
     for (size_t i = 0; i < testList.count; i++) {
@@ -95,22 +96,7 @@ int test() {
         }
     }
 
-    size_t testCount = testList.count, testPassedCount = 0, testFailedCount = 0;
-    for (size_t i = 0; i < testList.count; i++) {
-        Test *test = &testList.items[i];
-
-        switch (test->status) {
-            case TEST_STATUS_PASSED:
-                testPassedCount++;
-                break;
-            case TEST_STATUS_FAILED:
-                testFailedCount++;
-                break;
-        }
-    }
-
-    printf("\nTotal: %lu | " C_GREEN "Passed: %lu" C_RESET " | " C_RED "Failed: %lu" C_RESET " \n",
-           testCount, testPassedCount, testFailedCount);
+    print_totals_information();
 
     free(testList.items);
     free(testResultList.items);
@@ -297,4 +283,45 @@ void print_file(const char *file) {
     printf("%s\n", formatted);
 
     free(formatted);
+}
+
+void print_totals_information() {
+    printf("----------------------------------------\n");
+
+    size_t testCount = testList.count, testPassedCount = 0, testFailedCount = 0;
+    for (size_t i = 0; i < testList.count; i++) {
+        Test *test = &testList.items[i];
+
+        switch (test->status) {
+            case TEST_STATUS_PASSED:
+                testPassedCount++;
+                break;
+            case TEST_STATUS_FAILED:
+                testFailedCount++;
+                break;
+        }
+    }
+
+    size_t testResultCount = testResultList.count, testResultPassedCount = 0,
+           testResultFailedCount = 0;
+    for (size_t i = 0; i < testResultList.count; i++) {
+        TestResult *testResult = &testResultList.items[i];
+
+        switch (testResult->status) {
+            case TEST_STATUS_PASSED:
+                testResultPassedCount++;
+                break;
+            case TEST_STATUS_FAILED:
+                testResultFailedCount++;
+                break;
+        }
+    }
+
+    printf("Total tests:   %5lu | " C_GREEN "Passed: %5lu" C_RESET " | " C_RED "Failed: %5lu" C_RESET
+           " \n",
+           testCount, testPassedCount, testFailedCount);
+
+    printf("Total results: %5lu | " C_GREEN "Passed: %5lu" C_RESET " | " C_RED "Failed: %5lu" C_RESET
+           " \n",
+           testResultCount, testResultPassedCount, testResultFailedCount);
 }
