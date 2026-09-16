@@ -89,7 +89,7 @@ void              dwelui__test_data_add(TestDataProvider *, const char *, const 
         dwelui__test_data_provider_register(#name, name##_data_provider);                          \
     }                                                                                              \
                                                                                                    \
-    static TestDataProvider *name() {                                                              \
+    [[maybe_unused]] static TestDataProvider *name() {                                             \
         return dwelui__test_data_provider_find(#name);                                             \
     }                                                                                              \
                                                                                                    \
