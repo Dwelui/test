@@ -18,7 +18,7 @@ TEST_RUNNER := build/tests/run-tests
 TEST_CFLAGS := $(CFLAGS) -g -fsanitize=address -O0
 TEST_LDFLAGS := -fsanitize=address
 
-TEST_SRC := $(wildcard tests/*.c)
+TEST_SRC := $(wildcard tests/*.test.c) tests/main.c
 TEST_OBJ := $(TEST_SRC:tests/%.c=build/tests/obj/%.o)
 
 .PHONY: all test clean compdb
