@@ -9,10 +9,12 @@ The syntax this library is striving for should be pleasant and easy to use, look
 - [x] Memory allocation error on file without .test.
 - [ ] Output graceful error for `test_data_get` when `__data` is `nullptr`, used without data provider
 - [ ] Move to `Generated registry` from `Platform specific` solutions for auto registered tests
-- [ ] Detect when `test` did not run any assertions. Mark it as empty
+- [ ] Detect when `test` did not run any assertions. Mark it as empty (orange)
   - [ ] Add `assertion` count to tests
   - [ ] Add new status line for `empty`
   - [ ] Print `assertion` totals
+- [ ] Add `test_skip` for skipping tests (yellow)
+  - [ ] Allow message, that will be printed out
 - [x] Return correct status to `environment` when `tests` fail.
 - [x] Add `Data Providers`
 - [x] Rename `Data Providers` to `Test Data Providers`
