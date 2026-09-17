@@ -23,3 +23,8 @@ TEST(subtraction, {
     test_assert(digits[0] - digits[1] == digits[2]);
 })
 TEST_OPTIONS(subtraction, .dataProvider = validAdditionDigits())
+
+TEST(addition_with_missing_data_provider, {
+    const int *digits = test_data_get(int);
+    test_assert(digits[0] - digits[1] == digits[2]);
+})

@@ -104,6 +104,9 @@ void              dwelui__test_data_add(TestDataProvider *, const char *, const 
     }
 
 #define test_data_add(name, items) dwelui__test_data_add(dataProvider, name, &items)
-#define test_data_get(type)        ((const type *)(__data))
+#define test_data_get(type)                                                                        \
+    ((const type *)(__data));                                                                      \
+    if (nullptr == __data)                                                                         \
+    return dwelui__test_skip("missing data provider for test_data_get(#type)", __LINE__)
 
 #endif // DWELUI_TEST_H
