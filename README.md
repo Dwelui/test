@@ -13,7 +13,8 @@ The syntax this library is striving for should be pleasant and easy to use, look
   - [ ] Add `assertion` count to tests
   - [ ] Add new status line for `empty`
   - [ ] Print `assertion` totals
-- [x] Add `test_skip` for skipping tests
+- [x] Add `test_skip` for skipping tests (yellow)
+  - [x] Allow message, that will be printed out
 - [x] Return correct status to `environment` when `tests` fail.
 - [x] Add `Data Providers`
 - [x] Rename `Data Providers` to `Test Data Providers`

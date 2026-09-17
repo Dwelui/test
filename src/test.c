@@ -270,6 +270,10 @@ void print_test_information(const char *treePrefix, Test *test, TestResult *resu
         case TEST_STATUS_SKIPPED:
             printf("%s%s " C_GRAY "%s" C_RESET, treePrefix, test->name,
                    test_status_to_cstring(test->status));
+
+            if (nullptr != result->failMessage) {
+                printf(C_GRAY " because \"%s\"" C_RESET, result->failMessage);
+            }
             break;
         default:
             printf("%s%s %s\n", treePrefix, test->name, test_status_to_cstring(test->status));
