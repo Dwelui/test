@@ -8,11 +8,13 @@
 #define C_RED   "\x1b[31m"
 #define C_GREEN "\x1b[32m"
 #define C_BLUE  "\x1b[34m"
+#define C_GRAY  "\x1b[37m"
 #define C_RESET "\x1b[0m"
 
 typedef enum {
     TEST_STATUS_PASSED,
     TEST_STATUS_FAILED,
+    TEST_STATUS_SKIPPED,
     TEST_STATUS_PENDING,
 } TEST_STATUS;
 const char *test_status_to_cstring(TEST_STATUS status);
@@ -210,6 +212,15 @@ TestResult *dwelui__test_fail(const char *message, uint32_t line) {
     return result;
 }
 
+TestResult *dwelui__test_skip(const char *message, uint32_t line) {
+    TestResult *result  = test_result_create();
+    result->status      = TEST_STATUS_SKIPPED;
+    result->failMessage = message;
+    result->failLine    = line;
+
+    return result;
+}
+
 TestResult *dwelui__test_pass() {
     TestResult *result = test_result_create();
     result->status     = TEST_STATUS_PASSED;
@@ -228,6 +239,8 @@ const char *test_status_to_cstring(TEST_STATUS status) {
             return "passed";
         case TEST_STATUS_FAILED:
             return "failed";
+        case TEST_STATUS_SKIPPED:
+            return "skipped";
         case TEST_STATUS_PENDING:
             return "pending";
         default:
@@ -252,6 +265,10 @@ void print_test_information(const char *treePrefix, Test *test, TestResult *resu
             break;
         case TEST_STATUS_FAILED:
             printf("%s%s " C_RED "%s" C_RESET, treePrefix, test->name,
+                   test_status_to_cstring(test->status));
+            break;
+        case TEST_STATUS_SKIPPED:
+            printf("%s%s " C_GRAY "%s" C_RESET, treePrefix, test->name,
                    test_status_to_cstring(test->status));
             break;
         default:

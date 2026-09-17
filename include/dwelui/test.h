@@ -50,6 +50,7 @@ int               test();
 
 void              dwelui__test_register(const char *, const char *, uint32_t, TestFn);
 TestResult       *dwelui__test_fail(const char *, uint32_t);
+TestResult       *dwelui__test_skip(const char *, uint32_t);
 TestResult       *dwelui__test_pass();
 
 void              dwelui__test_data_provider_register(const char *, TestDataProviderFn);
@@ -60,6 +61,10 @@ void              dwelui__test_data_add(TestDataProvider *, const char *, const 
 
 #define test_assert(expr)                                                                          \
     if (false == (expr)) return dwelui__test_fail(#expr, __LINE__)
+
+#define test_fail(message) return dwelui__test_fail(message, __LINE__)
+
+#define test_skip(message) return dwelui__test_skip(message, __LINE__)
 
 #define TEST(name, ...)                                                                            \
     static TestResult *name##_test(const void *__data);                                            \
